@@ -32,10 +32,14 @@ final class SpeechViewController: UIViewController {
 
     @IBOutlet weak var recordButton: UIButton!
 
+    @IBOutlet weak var localeLabel: UILabel!
+
     // MARK: UIViewController
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        localeLabel.text = "Locale \(Locale.current.identifier)"
 
         // Disable the record buttons until authorization has been granted.
         recordButton.isEnabled = false
