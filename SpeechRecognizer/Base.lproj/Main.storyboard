@@ -22,12 +22,41 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D3d-Nh-SPI">
-                                <rect key="frame" x="16" y="41" width="343" height="568"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="CCU-0k-ioM">
+                                <rect key="frame" x="16" y="28" width="343" height="20.5"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Step: 0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3MH-Ht-sS1">
+                                        <rect key="frame" x="0.0" y="0.0" width="127.5" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Locale fr_FR" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qz0-hN-U8r">
+                                        <rect key="frame" x="127.5" y="0.0" width="215.5" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="woY-Og-tj7" userLabel="TextView Container">
+                                <rect key="frame" x="16" y="56.5" width="343" height="552.5"/>
+                                <subviews>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D3d-Nh-SPI">
+                                        <rect key="frame" x="0.0" y="0.0" width="343" height="552.5"/>
+                                        <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="0.081924229453424688" colorSpace="calibratedRGB"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
+                                    </textView>
+                                </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="D3d-Nh-SPI" secondAttribute="trailing" id="HdY-G6-VIR"/>
+                                    <constraint firstAttribute="bottom" secondItem="D3d-Nh-SPI" secondAttribute="bottom" id="opJ-jh-0nN"/>
+                                    <constraint firstItem="D3d-Nh-SPI" firstAttribute="leading" secondItem="woY-Og-tj7" secondAttribute="leading" id="rQh-Nd-0lL"/>
+                                    <constraint firstItem="D3d-Nh-SPI" firstAttribute="top" secondItem="woY-Og-tj7" secondAttribute="top" id="um2-tl-Fzx"/>
+                                </constraints>
+                            </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wXk-Vq-rSK">
                                 <rect key="frame" x="16" y="617" width="343" height="30"/>
                                 <state key="normal" title="Start recording"/>
@@ -35,28 +64,23 @@
                                     <action selector="recordButtonTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="is2-Zu-P9S"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qz0-hN-U8r">
-                                <rect key="frame" x="16" y="20" width="343" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="Qz0-hN-U8r" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="3Ey-Pt-k57"/>
-                            <constraint firstItem="Qz0-hN-U8r" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="6t2-dW-a8D"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="Qz0-hN-U8r" secondAttribute="trailing" id="8Pn-Ht-Ord"/>
-                            <constraint firstItem="D3d-Nh-SPI" firstAttribute="top" secondItem="Qz0-hN-U8r" secondAttribute="bottom" id="AOe-cY-0nh"/>
+                            <constraint firstItem="woY-Og-tj7" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="CvX-wi-ycL"/>
+                            <constraint firstItem="wXk-Vq-rSK" firstAttribute="top" secondItem="woY-Og-tj7" secondAttribute="bottom" constant="8" id="FdB-Su-hu4"/>
                             <constraint firstItem="wXk-Vq-rSK" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Fis-kI-Bto"/>
-                            <constraint firstItem="D3d-Nh-SPI" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="PVS-c1-TC3"/>
-                            <constraint firstItem="wXk-Vq-rSK" firstAttribute="top" secondItem="D3d-Nh-SPI" secondAttribute="bottom" constant="8" id="de6-9K-Ims"/>
+                            <constraint firstItem="woY-Og-tj7" firstAttribute="top" secondItem="CCU-0k-ioM" secondAttribute="bottom" constant="8" id="et5-RE-rk2"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="woY-Og-tj7" secondAttribute="trailing" id="gAx-YV-Nnt"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="wXk-Vq-rSK" secondAttribute="bottom" constant="20" id="kw4-KZ-aCG"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="D3d-Nh-SPI" secondAttribute="trailing" id="mqH-u2-2ke"/>
+                            <constraint firstItem="CCU-0k-ioM" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="lHH-eF-mys"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="CCU-0k-ioM" secondAttribute="leading" id="mJU-Jp-v2b"/>
                             <constraint firstAttribute="trailingMargin" secondItem="wXk-Vq-rSK" secondAttribute="trailing" id="tni-u1-fcW"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="CCU-0k-ioM" secondAttribute="trailing" id="w7U-8E-If2"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="currentStepLabel" destination="3MH-Ht-sS1" id="dfc-ou-lqT"/>
                         <outlet property="localeLabel" destination="Qz0-hN-U8r" id="pLI-WN-Rsh"/>
                         <outlet property="recordButton" destination="wXk-Vq-rSK" id="b30-be-vCx"/>
                         <outlet property="textView" destination="D3d-Nh-SPI" id="kQo-la-lWH"/>
@@ -64,7 +88,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="141.59999999999999" y="138.98050974512745"/>
+            <point key="canvasLocation" x="15" y="45"/>
         </scene>
     </scenes>
 </document>

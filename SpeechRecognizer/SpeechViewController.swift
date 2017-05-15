@@ -17,22 +17,59 @@ import UIKit
 import Speech
 import AVKit
 
+enum RecipeStepActions {
+    case forward
+    case backward
+    case restart
+}
+
 final class SpeechViewController: UIViewController {
     // MARK: Properties
 
-    private let speechRecognizer = SFSpeechRecognizer(locale: Locale.current)!
+    private lazy var speechRecognizer: SFSpeechRecognizer? = {
+        if let recognizer = SFSpeechRecognizer(locale: Locale.current) {
+            recognizer.delegate = self
+            return recognizer
+        }
+        else { return nil }
+    }()
 
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
 
     private var recognitionTask: SFSpeechRecognitionTask?
 
-    private let audioEngine = AVAudioEngine()
+    let taggerOptions: NSLinguisticTagger.Options = [.joinNames, .omitWhitespace]
+
+    lazy var linguisticTagger: NSLinguisticTagger = {
+        let lang = Locale.current.languageCode ?? "fr"
+        let tagSchemes = NSLinguisticTagger.availableTagSchemes(forLanguage: lang)
+        return NSLinguisticTagger(tagSchemes: tagSchemes, options: Int(self.taggerOptions.rawValue))
+    }()
+
+    private lazy var audioEngine: AVAudioEngine = {
+        return AVAudioEngine()
+    }()
 
     @IBOutlet weak var textView: UITextView!
 
     @IBOutlet weak var recordButton: UIButton!
 
     @IBOutlet weak var localeLabel: UILabel!
+
+    @IBOutlet weak var currentStepLabel: UILabel!
+
+    private var lastSpeechRecognitionResult: SFSpeechRecognitionResult?
+
+    private var shouldRestart = false
+    private var isStopping = false
+
+    private var currentStep = 0 {
+        didSet {
+            UIView.animate(withDuration: 0.35, delay: 0, options: .transitionCurlUp, animations: { 
+                self.currentStepLabel.text = "Step: \(self.currentStep)"
+            }, completion: nil)
+        }
+    }
 
     // MARK: UIViewController
 
@@ -46,7 +83,7 @@ final class SpeechViewController: UIViewController {
     }
 
     override public func viewDidAppear(_ animated: Bool) {
-        speechRecognizer.delegate = self
+        speechRecognizer?.delegate = self
 
         SFSpeechRecognizer.requestAuthorization { authStatus in
             /*
@@ -74,7 +111,20 @@ final class SpeechViewController: UIViewController {
         }
     }
 
+    // MARK: Interface Builder actions
+
+    @IBAction func recordButtonTapped() {
+        if audioEngine.isRunning {
+            stopRecording()
+        } else {
+            try! startRecording()
+        }
+    }
+
+    // MARK: Private methods
+
     private func startRecording() throws {
+        recordButton.setTitle("Stop recording", for: .normal)
 
         // Cancel the previous task if it's running.
         if let recognitionTask = recognitionTask {
@@ -91,6 +141,7 @@ final class SpeechViewController: UIViewController {
 
         guard let inputNode = audioEngine.inputNode else { fatalError("Audio engine has no input node") }
         guard let recognitionRequest = recognitionRequest else { fatalError("Unable to created a SFSpeechAudioBufferRecognitionRequest object") }
+        guard let speechRecognizer = speechRecognizer else { fatalError("Unable to get speechRecognizer") }
 
         // Configure request so that results are returned before audio recording is finished
         recognitionRequest.shouldReportPartialResults = true
@@ -101,11 +152,14 @@ final class SpeechViewController: UIViewController {
             var isFinal = false
 
             if let result = result {
-                self.textView.text = self.buildText(result: result)
+                self.lastSpeechRecognitionResult = result
                 isFinal = result.isFinal
             }
 
             if error != nil || isFinal {
+                if let err = error {
+                    print("Error while recognizing: \(err)")
+                }
                 self.audioEngine.stop()
                 inputNode.removeTap(onBus: 0)
 
@@ -113,7 +167,20 @@ final class SpeechViewController: UIViewController {
                 self.recognitionTask = nil
 
                 self.recordButton.isEnabled = true
-                self.recordButton.setTitle("Start Recording", for: [])
+                self.recordButton.setTitle("Start Recording", for: .normal)
+
+                self.isStopping = false
+
+                if self.shouldRestart {
+                    self.shouldRestart = false
+                    try! self.startRecording()
+                }
+            }
+            else if !self.isStopping {
+                if try! self.processSentence() {
+                    self.shouldRestart = true
+                    self.stopRecording()
+                }
             }
         }
 
@@ -121,38 +188,93 @@ final class SpeechViewController: UIViewController {
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
             self.recognitionRequest?.append(buffer)
         }
-
+        
         audioEngine.prepare()
-
+        
         try audioEngine.start()
 
-        textView.text = "(Go ahead, I'm listening)"
+        appendToTextView("(Go ahead, I'm listening)\n")
     }
 
-    // MARK: Interface Builder actions
+    private func appendToTextView(_ text: String) {
+        textView.text = text + "\n" + (textView.text ?? "")
+    }
 
-    @IBAction func recordButtonTapped() {
-        if audioEngine.isRunning {
-            audioEngine.stop()
-            recognitionRequest?.endAudio()
-            recordButton.isEnabled = false
-            recordButton.setTitle("Stopping", for: .disabled)
-        } else {
-            try! startRecording()
-            recordButton.setTitle("Stop recording", for: [])
-        }
+    private func stopRecording() {
+        isStopping = true
+        audioEngine.stop()
+        recognitionRequest?.endAudio()
+        recordButton.isEnabled = false
+        recordButton.setTitle("Stopping", for: .disabled)
     }
 
     private func buildText(result: SFSpeechRecognitionResult) -> String {
-        var text = "Best: \(result.bestTranscription.formattedString)\n"
+        let sentence = result.bestTranscription.formattedString
+        var text = "Best: \(sentence)\n"
         for (index, transcription) in result.transcriptions.enumerated() {
             text += "[\(index)] \(transcription.formattedString)\n"
             for segment in transcription.segments {
                 text += "\t\(segment.substring)\n"
-                text += "\tConfidence: \(segment.confidence)\n"
+                text += "\t\tConfidence: \(segment.confidence)\n"
+                text += "\t\tAlternates: \(segment.alternativeSubstrings.joined(separator: ","))\n"
             }
+            text += "\n"
         }
+
+        /// LinguisticTagger is not working -_-, at least in french
+//        text += "\tTagging\n"
+//        self.linguisticTagger.string = sentence
+//        self.linguisticTagger.enumerateTags(
+//            in: NSRange(location: 0, length: sentence.characters.count),
+//            scheme: NSLinguisticTagSchemeNameTypeOrLexicalClass, options: taggerOptions) { (tag, tokenRange, _, _) in
+//                let token = (sentence as NSString).substring(with: tokenRange)
+//                text += "\t\t\(token) -> \(tag)\n"
+//        }
+
         return text
+    }
+
+    private func processSentence() throws -> Bool {
+        guard let result = lastSpeechRecognitionResult else {
+            return false
+        }
+
+        let sentence = result.bestTranscription.formattedString
+        print("Processing sentence: \(sentence)")
+
+        let findStrings: (_ strings: [String]) -> Bool = { strings -> Bool in
+            return strings.filter {
+                sentence.range(of: $0, options: .caseInsensitive, range: nil, locale: nil) != nil
+            }.count > 0
+        }
+
+        if findStrings([ "prochain", "prochaine", "passer", "suite", "suivant", "après", "next" ]) {
+            currentStep += 1
+            appendToTextView(buildText(result: result))
+            lastSpeechRecognitionResult = nil
+            return true
+        }
+
+        if findStrings([ "revenir", "précédent", "avant", "previous" ]) {
+            currentStep -= 1
+            appendToTextView(buildText(result: result))
+            lastSpeechRecognitionResult = nil
+            return true
+        }
+
+        if findStrings([ "début" ]) {
+            currentStep = 0
+            appendToTextView(buildText(result: result))
+            lastSpeechRecognitionResult = nil
+        }
+
+        if findStrings([ "dernière"]) {
+            currentStep = 99
+            appendToTextView(buildText(result: result))
+            lastSpeechRecognitionResult = nil
+        }
+
+        return false
     }
 }
 
