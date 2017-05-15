@@ -240,12 +240,11 @@ final class SpeechViewController: UIViewController {
         }
 
         let sentence = result.bestTranscription.formattedString
-        print("Processing sentence: \(sentence)")
 
-        let findStrings: (_ strings: [String]) -> Bool = { strings -> Bool in
-            return strings.filter {
-                sentence.range(of: $0, options: .caseInsensitive, range: nil, locale: nil) != nil
-            }.count > 0
+        let findStrings: (_ regexes: [String]) -> Bool = { regexes -> Bool in
+            return regexes.first {
+                sentence.range(of: $0, options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil
+            } != nil
         }
 
         if findStrings([ "prochain", "prochaine", "passer", "suite", "suivant", "après", "next" ]) {
