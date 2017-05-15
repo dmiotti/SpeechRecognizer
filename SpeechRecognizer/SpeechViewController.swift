@@ -101,7 +101,7 @@ final class SpeechViewController: UIViewController {
             var isFinal = false
 
             if let result = result {
-                self.textView.text = result.bestTranscription.formattedString
+                self.textView.text = self.buildText(result: result)
                 isFinal = result.isFinal
             }
 
@@ -141,6 +141,18 @@ final class SpeechViewController: UIViewController {
             try! startRecording()
             recordButton.setTitle("Stop recording", for: [])
         }
+    }
+
+    private func buildText(result: SFSpeechRecognitionResult) -> String {
+        var text = "Best: \(result.bestTranscription.formattedString)\n"
+        for (index, transcription) in result.transcriptions.enumerated() {
+            text += "[\(index)] \(transcription.formattedString)\n"
+            for segment in transcription.segments {
+                text += "\t\(segment.substring)\n"
+                text += "\tConfidence: \(segment.confidence)\n"
+            }
+        }
+        return text
     }
 }
 
