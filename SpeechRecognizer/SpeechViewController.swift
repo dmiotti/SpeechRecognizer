@@ -65,9 +65,7 @@ final class SpeechViewController: UIViewController {
 
     private var currentStep = 0 {
         didSet {
-            UIView.animate(withDuration: 0.35, delay: 0, options: .transitionCurlUp, animations: { 
-                self.currentStepLabel.text = "Step: \(self.currentStep)"
-            }, completion: nil)
+            currentStepLabel.text = "Step: \(currentStep)"
         }
     }
 
@@ -145,6 +143,7 @@ final class SpeechViewController: UIViewController {
 
         // Configure request so that results are returned before audio recording is finished
         recognitionRequest.shouldReportPartialResults = true
+        recognitionRequest.contextualStrings = [ "oups" ]
 
         // A recognition task represents a speech recognition session.
         // We keep a reference to the task so that it can be cancelled.
@@ -170,6 +169,11 @@ final class SpeechViewController: UIViewController {
                 self.recordButton.setTitle("Start Recording", for: .normal)
 
                 self.isStopping = false
+
+//                if try! self.processSentence() {
+//                    self.shouldRestart = true
+//                    try! self.startRecording()
+//                }
 
                 if self.shouldRestart {
                     self.shouldRestart = false
@@ -217,6 +221,7 @@ final class SpeechViewController: UIViewController {
                 text += "\t\(segment.substring)\n"
                 text += "\t\tConfidence: \(segment.confidence)\n"
                 text += "\t\tAlternates: \(segment.alternativeSubstrings.joined(separator: ","))\n"
+                text += "\t\tTimestamp: \(segment.timestamp)"
             }
             text += "\n"
         }
@@ -243,10 +248,32 @@ final class SpeechViewController: UIViewController {
 
         let findStrings: (_ regexes: [String]) -> Bool = { regexes -> Bool in
             return regexes.first {
-                sentence.range(of: $0, options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil
+                sentence.range(
+                    of: $0,
+                    options: [.regularExpression, .caseInsensitive],
+                    range: nil,
+                    locale: nil) != nil
             } != nil
         }
 
+//        // Next using regex
+//        let nextRegexes = [ "(?:passer|aller).*(?:étape).*(suivant)" ]
+//        if findStrings(nextRegexes) {
+//            currentStep += 1
+//            appendToTextView(buildText(result: result))
+//            lastSpeechRecognitionResult = nil
+//            return true
+//        }
+//
+//        let prevRegexes = [ "(?:passer|aller).*(?:étape).*(précédent)" ]
+//        if findStrings(prevRegexes) {
+//            currentStep -= 1
+//            appendToTextView(buildText(result: result))
+//            lastSpeechRecognitionResult = nil
+//            return true
+//        }
+
+        // Next
         if findStrings([ "prochain", "prochaine", "passer", "suite", "suivant", "après", "next" ]) {
             currentStep += 1
             appendToTextView(buildText(result: result))
@@ -254,19 +281,22 @@ final class SpeechViewController: UIViewController {
             return true
         }
 
-        if findStrings([ "revenir", "précédent", "avant", "previous" ]) {
+        // Previous
+        if findStrings([ "back", "reviens", "oups", "revenir", "précédent", "avant", "previous" ]) {
             currentStep -= 1
             appendToTextView(buildText(result: result))
             lastSpeechRecognitionResult = nil
             return true
         }
 
+        // Restart
         if findStrings([ "début" ]) {
             currentStep = 0
             appendToTextView(buildText(result: result))
             lastSpeechRecognitionResult = nil
         }
 
+        // Last
         if findStrings([ "dernière"]) {
             currentStep = 99
             appendToTextView(buildText(result: result))

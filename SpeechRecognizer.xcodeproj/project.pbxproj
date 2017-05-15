@@ -12,7 +12,6 @@
 		5876D0831EC9A1DD000D1E01 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5876D0811EC9A1DD000D1E01 /* Main.storyboard */; };
 		5876D0851EC9A1DD000D1E01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5876D0841EC9A1DD000D1E01 /* Assets.xcassets */; };
 		5876D0881EC9A1DD000D1E01 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5876D0861EC9A1DD000D1E01 /* LaunchScreen.storyboard */; };
-		5876D0901EC9AF75000D1E01 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 5876D08F1EC9AF75000D1E01 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -140,7 +139,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5876D0901EC9AF75000D1E01 /* README.md in Sources */,
 				5876D0801EC9A1DD000D1E01 /* SpeechViewController.swift in Sources */,
 				5876D07E1EC9A1DD000D1E01 /* AppDelegate.swift in Sources */,
 			);
