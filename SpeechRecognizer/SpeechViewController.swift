@@ -17,12 +17,6 @@ import UIKit
 import Speech
 import AVKit
 
-enum RecipeStepActions {
-    case forward
-    case backward
-    case restart
-}
-
 final class SpeechViewController: UIViewController {
     // MARK: Properties
 
@@ -266,6 +260,7 @@ final class SpeechViewController: UIViewController {
             return true
         }
 
+        // Prev using regex
         let prevRegexes = [ "(?:passer|aller).*(?:étape).*(?:précédent)" ]
         if findStrings(prevRegexes) {
             currentStep -= 1
@@ -338,9 +333,9 @@ extension SpeechViewController: SFSpeechRecognizerDelegate {
 
 func matchesInCapturingGroups(text: String, pattern: String) -> [String] {
     let textRange = NSRange(location: 0, length: text.characters.count)
-    let escapedPattern = NSRegularExpression.escapedPattern(for: pattern)
-    let matches = try! NSRegularExpression(pattern: escapedPattern, options: .caseInsensitive)
-    return matches.matches(in: text, options: .reportCompletion, range: textRange).map {
-        (text as NSString).substring(with: $0.range) as String
+    let matches = try! NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+    return matches.matches(in: text, options: .reportCompletion, range: textRange).map { res -> String in
+        let latestRange = res.rangeAt(res.numberOfRanges - 1)
+        return (text as NSString).substring(with: latestRange) as String
     }
 }
