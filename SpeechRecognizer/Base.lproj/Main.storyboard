@@ -25,14 +25,15 @@
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="CCU-0k-ioM">
                                 <rect key="frame" x="16" y="28" width="343" height="20.5"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Step: 1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3MH-Ht-sS1">
-                                        <rect key="frame" x="0.0" y="0.0" width="123" height="20.5"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Étape: 0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3MH-Ht-sS1">
+                                        <rect key="frame" x="0.0" y="0.0" width="139" height="20.5"/>
+                                        <accessibility key="accessibilityConfiguration" hint="Présente l'étape actuelle" label="Étape actuelle"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Locale fr_FR" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qz0-hN-U8r">
-                                        <rect key="frame" x="123" y="0.0" width="220" height="20.5"/>
+                                        <rect key="frame" x="139" y="0.0" width="204" height="20.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -44,7 +45,6 @@
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D3d-Nh-SPI">
                                         <rect key="frame" x="0.0" y="0.0" width="343" height="552.5"/>
-                                        <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="0.081924229453424688" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
                                     </textView>
@@ -59,7 +59,8 @@
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wXk-Vq-rSK">
                                 <rect key="frame" x="16" y="617" width="343" height="30"/>
-                                <state key="normal" title="Start recording"/>
+                                <accessibility key="accessibilityConfiguration" hint="Commencer ou arrêter l'enregistrement" label="Bouton d'enregistrement"/>
+                                <state key="normal" title="Commencer l'enregistrement"/>
                                 <connections>
                                     <action selector="recordButtonTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="is2-Zu-P9S"/>
                                 </connections>
