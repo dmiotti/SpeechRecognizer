@@ -259,6 +259,7 @@ final class SpeechViewController: UIViewController {
                 if let error = error {
                     print("\(Date()) Error while recognizing: \(error)")
                     if (error as NSError).code == 203 {
+                        self.shouldRestart = false
                         return
                     }
                 }

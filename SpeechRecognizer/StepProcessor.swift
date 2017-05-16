@@ -23,7 +23,7 @@ final class StepProcessor: NSObject {
         let numbersPrefix = [
             "un": 1, "une": 1, "deux": 2, "trois": 3,
             "quatre": 4, "cinq": 5, "six": 6,
-            "sept": 7, "huit": 8, "neuf": 9,
+            "sept": 7, "huit": 8, "neuf": 9, "dix": 10, "onze": 11,
             "initial": 1, "final": recipe.steps.count
         ]
         let prefixKeys = numbersPrefix.keys.joined(separator: "|")
@@ -36,7 +36,7 @@ final class StepProcessor: NSObject {
         let numbersSuffix = [
             "première": 1, "premier": 1, "deuxième": 2, "troisième": 3,
             "quatrième": 4, "cinquième": 5, "sixième": 6,
-            "septième": 7, "huitième": 8, "neuvième": 9,
+            "septième": 7, "huitième": 8, "neuvième": 9, "dixième": 10, "onzième": 11,
             "dernière": recipe.steps.count
         ]
         let suffixKeys = numbersSuffix.keys.joined(separator: "|")
@@ -46,7 +46,7 @@ final class StepProcessor: NSObject {
             return nb - 1
         }
 
-        let restartPatterns = [ "début", "commencer", "recommencer", "first" ]
+        let restartPatterns = [ "début", "commencer", "first" ]
         if hasMatchedRegexes(in: sentence, regexes: restartPatterns) {
             return 0
         }
@@ -56,7 +56,7 @@ final class StepProcessor: NSObject {
             return recipe.steps.count - 1
         }
 
-        let nextPatterns = [ "prochain", "prochaine", "passer", "suite", "suivant", "après", "next" ]
+        let nextPatterns = [ "prochain", "passer", "suite", "suivant", "après", "next" ]
         if hasMatchedRegexes(in: sentence, regexes: nextPatterns) {
             return current + 1
         }
