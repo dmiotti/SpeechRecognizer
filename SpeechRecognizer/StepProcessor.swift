@@ -9,6 +9,12 @@
 import UIKit
 
 final class StepProcessor: NSObject {
+    static var stepNRegex = [String]()
+    static var startRegex = [String]()
+    static var endRegex = [String]()
+    static var nextRegex = [String]()
+    static var previousRegex = [String]()
+
     class func nextStep(sentence: String, current: Int, in recipe: Recipe) -> Int? {
         /// Step (n)
         let numbersPrefix = [
@@ -38,7 +44,7 @@ final class StepProcessor: NSObject {
         }
 
         /// Restart
-        let restartPatterns = [ "début", "commencer", "first" ]
+        let restartPatterns = [ "début", "commenc", "first" ]
         if hasMatchedRegexes(in: sentence, regexes: restartPatterns) {
             return 0
         }

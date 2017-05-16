@@ -126,6 +126,8 @@ final class SpeechViewController: UIViewController {
         } catch let err {
             print("Error while configuring AVAudioSession: \(err)")
         }
+
+        loadRemoteCSV()
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -185,10 +187,14 @@ final class SpeechViewController: UIViewController {
     }
 
     @IBAction func refreshButtonTapped(_ sender: Any) {
-        let pending = UIAlertController(title: "Refreshing regular expressions", message: "Use network it can be slow", preferredStyle: .alert)
+        loadRemoteCSV()
+    }
+
+    private func loadRemoteCSV() {
+        let pending = UIAlertController(title: "Refreshing regular expressions", message: "Fetching over network it can be slow", preferredStyle: .alert)
         present(pending, animated: true)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+        CSVImporter.load {
             self.dismiss(animated: true)
         }
     }
@@ -237,7 +243,7 @@ final class SpeechViewController: UIViewController {
                         else if
                             let recipe = self.recipe,
                             let step = StepProcessor.nextStep(sentence: sentence, current: self.currentStep, in: recipe) {
-
+                            self.appendToTextView("🎤 \(sentence)")
                             self.goToStep(step)
                             self.shouldRestart = true
                             self.stopRecording()
@@ -250,8 +256,6 @@ final class SpeechViewController: UIViewController {
             }
 
             if error != nil || isFinal {
-                self.appendToTextView("👨🏼‍🚀 (Nah, I'm stopping listening you)")
-
                 self.invalidateTimeoutTimer()
 
                 self.audioEngine.stop()
@@ -274,8 +278,11 @@ final class SpeechViewController: UIViewController {
                 }
 
                 if self.shouldRestart || error != nil {
+                    self.appendToTextView("👨🏼‍🚀 (Wait a sec, I'm restarting)")
                     self.shouldRestart = false
                     try? self.startRecording()
+                } else {
+                    self.appendToTextView("👨🏼‍🚀 (Nah, I'm stopping listening you)")
                 }
             }
         }

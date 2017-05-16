@@ -10,6 +10,8 @@
 		582E9B891ECB3B6B00321BE4 /* RecipeLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */; };
 		582E9B8B1ECB427A00321BE4 /* StepProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582E9B8A1ECB427A00321BE4 /* StepProcessor.swift */; };
 		58706A071ECB4EE000AD0441 /* CSVImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58706A061ECB4EE000AD0441 /* CSVImporter.swift */; };
+		58706A0A1ECB54B800AD0441 /* CSV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58706A081ECB542200AD0441 /* CSV.framework */; };
+		58706A0B1ECB54B800AD0441 /* CSV.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 58706A081ECB542200AD0441 /* CSV.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5876D07E1EC9A1DD000D1E01 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5876D07D1EC9A1DD000D1E01 /* AppDelegate.swift */; };
 		5876D0801EC9A1DD000D1E01 /* SpeechViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5876D07F1EC9A1DD000D1E01 /* SpeechViewController.swift */; };
 		5876D0831EC9A1DD000D1E01 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5876D0811EC9A1DD000D1E01 /* Main.storyboard */; };
@@ -19,10 +21,25 @@
 		5876D0951EC9F876000D1E01 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5876D0931EC9F876000D1E01 /* Crashlytics.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		58706A0C1ECB54B800AD0441 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				58706A0B1ECB54B800AD0441 /* CSV.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecipeLibrary.swift; sourceTree = "<group>"; };
 		582E9B8A1ECB427A00321BE4 /* StepProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StepProcessor.swift; sourceTree = "<group>"; };
 		58706A061ECB4EE000AD0441 /* CSVImporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CSVImporter.swift; sourceTree = "<group>"; };
+		58706A081ECB542200AD0441 /* CSV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CSV.framework; path = Carthage/Build/iOS/CSV.framework; sourceTree = SOURCE_ROOT; };
 		5876D07A1EC9A1DD000D1E01 /* SpeechRecognizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeechRecognizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5876D07D1EC9A1DD000D1E01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5876D07F1EC9A1DD000D1E01 /* SpeechViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechViewController.swift; sourceTree = "<group>"; };
@@ -40,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58706A0A1ECB54B800AD0441 /* CSV.framework in Frameworks */,
 				5876D0951EC9F876000D1E01 /* Crashlytics.framework in Frameworks */,
 				5876D0941EC9F876000D1E01 /* Fabric.framework in Frameworks */,
 			);
@@ -77,6 +95,7 @@
 				5876D0841EC9A1DD000D1E01 /* Assets.xcassets */,
 				5876D0861EC9A1DD000D1E01 /* LaunchScreen.storyboard */,
 				5876D0891EC9A1DD000D1E01 /* Info.plist */,
+				58706A081ECB542200AD0441 /* CSV.framework */,
 				5876D0921EC9F876000D1E01 /* Fabric.framework */,
 				5876D0931EC9F876000D1E01 /* Crashlytics.framework */,
 			);
@@ -94,6 +113,7 @@
 				5876D0771EC9A1DD000D1E01 /* Frameworks */,
 				5876D0781EC9A1DD000D1E01 /* Resources */,
 				5876D0911EC9F867000D1E01 /* Crashlytics */,
+				58706A0C1ECB54B800AD0441 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -305,6 +325,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = SpeechRecognizer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -322,6 +343,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = SpeechRecognizer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
