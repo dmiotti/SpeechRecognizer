@@ -22,6 +22,14 @@ private let sentenceToken = "ok chef"
 final class SpeechViewController: UIViewController {
     // MARK: Properties
 
+    @IBOutlet weak var textView: UITextView!
+
+    @IBOutlet weak var recordButton: UIButton!
+
+    @IBOutlet weak var localeLabel: UILabel!
+
+    @IBOutlet weak var currentStepLabel: UILabel!
+
     private lazy var speechRecognizer: SFSpeechRecognizer? = {
         if let recognizer = SFSpeechRecognizer(locale: Locale.current) {
             recognizer.delegate = self
@@ -34,7 +42,7 @@ final class SpeechViewController: UIViewController {
 
     private var recognitionTask: SFSpeechRecognitionTask?
 
-    let taggerOptions: NSLinguisticTagger.Options = [.joinNames, .omitWhitespace]
+    private let taggerOptions: NSLinguisticTagger.Options = [.joinNames, .omitWhitespace]
 
     lazy var linguisticTagger: NSLinguisticTagger = {
         let lang = Locale.current.languageCode ?? "fr"
@@ -46,25 +54,34 @@ final class SpeechViewController: UIViewController {
         return AVAudioEngine()
     }()
 
-    @IBOutlet weak var textView: UITextView!
-
-    @IBOutlet weak var recordButton: UIButton!
-
-    @IBOutlet weak var localeLabel: UILabel!
-
-    @IBOutlet weak var currentStepLabel: UILabel!
-
     private var lastSpeechRecognitionResult: SFSpeechRecognitionResult?
 
     private var shouldRestart = false
     private var isStopping = false
     private var timeoutTimer: Timer?
 
-    private var currentStep = 0 {
+    private var recipe = Recipe(title: "Nems aux fraises", description: "Dessert facile et bon marché. Végétarien", steps: [
+        "Laver les fraises sous l'eau et les équeuter.",
+        "Les couper en morceaux dans un saladier et les saupoudrer de sucre.",
+        "Etaler vos feuilles de brick sur un plan de travail et couper les en deux.",
+        "Beurrer les feuilles de brick à l'aide d'un pinceau et déposer au centre quelques morceaux de fraises au sucre.",
+        "Poser dessus une cuillère à café de crème pâtissière et rouler les feuilles de brick comme un nem.",
+        "Chaque convive trempera ses nems dans le coulis de fruits rouges froid."
+    ])
+
+    private var currentStep = 1 {
         didSet {
             currentStepLabel.text = "Step: \(currentStep)"
+            appendToTextView("(Moving to step \(currentStep))")
+            self.speak(at: currentStep)
         }
     }
+
+    private lazy var speechSynthesizer: AVSpeechSynthesizer = {
+        let synth = AVSpeechSynthesizer()
+        synth.delegate = self
+        return synth
+    }()
 
     // MARK: UIViewController
 
@@ -75,6 +92,16 @@ final class SpeechViewController: UIViewController {
 
         // Disable the record buttons until authorization has been granted.
         recordButton.isEnabled = false
+
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
+            try audioSession.setMode(AVAudioSessionModeMeasurement)
+            try audioSession.overrideOutputAudioPort(.speaker)
+            try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
+        } catch let err {
+            print("Error while configuring AVAudioSession: \(err)")
+        }
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -112,7 +139,7 @@ final class SpeechViewController: UIViewController {
         if audioEngine.isRunning {
             stopRecording()
         } else {
-            try! startRecording()
+            try? startRecording()
         }
     }
 
@@ -126,11 +153,6 @@ final class SpeechViewController: UIViewController {
             recognitionTask.cancel()
             self.recognitionTask = nil
         }
-
-        let audioSession = AVAudioSession.sharedInstance()
-        try audioSession.setCategory(AVAudioSessionCategoryRecord)
-        try audioSession.setMode(AVAudioSessionModeMeasurement)
-        try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
 
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
 
@@ -149,7 +171,7 @@ final class SpeechViewController: UIViewController {
 
             if let result = result {
                 let hasChanged = self.lastSpeechRecognitionResult?.bestTranscription.formattedString != result.bestTranscription.formattedString
-                print("* Receiving \(result.bestTranscription.formattedString)")
+                print("* Receiving: \(result.bestTranscription.formattedString)")
                 self.lastSpeechRecognitionResult = result
                 isFinal = result.isFinal
 
@@ -158,20 +180,18 @@ final class SpeechViewController: UIViewController {
                     self.timeoutTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false, block: { (timer) in
                         print("* Speaking timeout reached")
                         self.invalidateTimeoutTimer()
-                        if try! self.processSentence() {
+                        if let processed = try? self.processSentence(), processed {
                             self.shouldRestart = true
                             self.stopRecording()
                         } else {
-                            self.appendToTextView("(I didn't understand you, please try again)\n")
+                            self.appendToTextView("(Go ahead, I'm listening)\n")
                         }
                     })
                 }
             }
 
             if error != nil || isFinal {
-                if let err = error {
-                    print("Error while recognizing: \(err)")
-                }
+
                 self.invalidateTimeoutTimer()
 
                 self.audioEngine.stop()
@@ -185,7 +205,11 @@ final class SpeechViewController: UIViewController {
 
                 self.isStopping = false
 
-                if self.shouldRestart {
+                if let err = error {
+                    print("Error while recognizing: \(err)")
+                }
+
+                if self.shouldRestart || error != nil {
                     self.shouldRestart = false
                     try! self.startRecording()
                 }
@@ -209,7 +233,7 @@ final class SpeechViewController: UIViewController {
         timeoutTimer = nil
     }
 
-    private func appendToTextView(_ text: String) {
+    fileprivate func appendToTextView(_ text: String) {
         textView.text = text + "\n" + (textView.text ?? "")
     }
 
@@ -226,15 +250,8 @@ final class SpeechViewController: UIViewController {
         var text = "Best: \(sentence)\n"
         for (index, transcription) in result.transcriptions.enumerated() {
             text += "[\(index)] \(transcription.formattedString)\n"
-            for segment in transcription.segments {
-                text += "\t\(segment.substring)\n"
-                text += "\t\tConfidence: \(segment.confidence)\n"
-                text += "\t\tAlternates: \(segment.alternativeSubstrings.joined(separator: ","))\n"
-                text += "\t\tTimestamp: \(segment.timestamp)"
-            }
-            text += "\n"
         }
-
+        text += "\n"
         return text
     }
 
@@ -264,8 +281,8 @@ final class SpeechViewController: UIViewController {
         // Next using regex
         let nextRegexes = [ "(?:passer|aller)*.*(?:étape).*(?:suivant)" ]
         if findStrings(nextRegexes) {
-            currentStep += 1
             appendToTextView(buildText(result: result))
+            goToStep(currentStep + 1)
             lastSpeechRecognitionResult = nil
             return true
         }
@@ -273,8 +290,8 @@ final class SpeechViewController: UIViewController {
         // Prev using regex
         let prevRegexes = [ "(?:passer|aller)*.*(?:étape).*(?:précédent)" ]
         if findStrings(prevRegexes) {
-            currentStep -= 1
             appendToTextView(buildText(result: result))
+            goToStep(currentStep - 1)
             lastSpeechRecognitionResult = nil
             return true
         }
@@ -282,7 +299,7 @@ final class SpeechViewController: UIViewController {
         // Step index
         let numberMatching = [
             "zéro": 0,
-            "un": 1, "deux": 2, "trois": 3,
+            "un": 1, "une": 1, "deux": 2, "trois": 3,
             "quatre": 4, "cinq": 5, "six": 6,
             "sept": 7, "huit": 8, "neuf": 9
         ]
@@ -290,50 +307,89 @@ final class SpeechViewController: UIViewController {
         let stepIndexRegex = "(?:passer|aller)*.*(?:étape)*.*(\(allKeys))"
         let stepMatches = matchesInCapturingGroups(text: sentence, pattern: stepIndexRegex)
         if let nb = stepMatches.first, let val = numberMatching[nb] {
-            currentStep = val
             appendToTextView(buildText(result: result))
+            goToStep(val)
             lastSpeechRecognitionResult = nil
             return true
         }
 
         // Restart
-        if findStrings([ "début" ]) {
-            currentStep = 0
+        if findStrings([ "début", "commencer", "recommencer" ]) {
             appendToTextView(buildText(result: result))
+            goToStep(1)
             lastSpeechRecognitionResult = nil
             return true
         }
 
         // Last
         if findStrings([ "dernière"]) {
-            currentStep = 99
             appendToTextView(buildText(result: result))
+            goToStep(recipe.steps.count)
             lastSpeechRecognitionResult = nil
             return true
         }
 
         // Next
         if findStrings([ "prochain", "prochaine", "passer", "suite", "suivant", "après", "next" ]) {
-            currentStep += 1
             appendToTextView(buildText(result: result))
+            goToStep(currentStep + 1)
             lastSpeechRecognitionResult = nil
             return true
         }
 
         // Previous
         if findStrings([ "back", "retour", "reviens", "oups", "revenir", "précédent", "avant", "previous" ]) {
-            currentStep -= 1
             appendToTextView(buildText(result: result))
+            goToStep(currentStep - 1)
             lastSpeechRecognitionResult = nil
             return true
         }
 
         return false
     }
+
+    private func goToStep(_ step: Int) {
+        guard step >= 1 && step <= recipe.steps.count else {
+            speak(text: "Il n'y a pas d'étape \(step)")
+            return
+        }
+        currentStep = step - 1
+    }
+
+    private func getUtterance(text: String) -> AVSpeechUtterance {
+        return AVSpeechUtterance(string: text)
+    }
+
+    private func speak(at step: Int) {
+        appendToTextView("* Start speaking for \(recipe.title) at step \(step + 1)\n")
+
+        var utterances = [AVSpeechUtterance]()
+
+        if step == 0 {
+            let titleUtt = getUtterance(text: recipe.title)
+            let descUtt = getUtterance(text: recipe.description)
+            utterances.append(titleUtt)
+            utterances.append(descUtt)
+        }
+
+        let stepExplanation = getUtterance(text: "Étape \(step + 1)")
+        utterances.append(stepExplanation)
+
+        let instruction = getUtterance(text: recipe.steps[step])
+        utterances.append(instruction)
+
+        utterances.forEach { $0.volume = 1 }
+        utterances.forEach(speechSynthesizer.speak)
+    }
+
+    private func speak(text: String) {
+        let utt = getUtterance(text: text)
+        speechSynthesizer.speak(utt)
+    }
 }
 
 extension SpeechViewController: SFSpeechRecognizerDelegate {
-    public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
+    func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
         if available {
             recordButton.isEnabled = true
             recordButton.setTitle("Start Recording", for: .normal)
@@ -344,9 +400,17 @@ extension SpeechViewController: SFSpeechRecognizerDelegate {
     }
 }
 
-func matchesInCapturingGroups(text: String, pattern: String) -> [String] {
+extension SpeechViewController: AVSpeechSynthesizerDelegate {
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
+        appendToTextView("('\(utterance.speechString)')\n")
+    }
+}
+
+private func matchesInCapturingGroups(text: String, pattern: String) -> [String] {
     let textRange = NSRange(location: 0, length: text.characters.count)
-    let matches = try! NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+    guard let matches = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else {
+        return []
+    }
     return matches.matches(in: text, options: .reportCompletion, range: textRange).map { res -> String in
         let latestRange = res.rangeAt(res.numberOfRanges - 1)
         return (text as NSString).substring(with: latestRange) as String
