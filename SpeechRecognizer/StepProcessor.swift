@@ -10,16 +10,7 @@ import UIKit
 
 final class StepProcessor: NSObject {
     class func nextStep(sentence: String, current: Int, in recipe: Recipe) -> Int? {
-        let nextRegexes = [ "(?:étape).*(?:suivant)" ]
-        if hasMatchedRegexes(in: sentence, regexes: nextRegexes) {
-            return current + 1
-        }
-
-        let prevRegexes = [ "(?:étape).*(?:précédent)" ]
-        if hasMatchedRegexes(in: sentence, regexes: prevRegexes) {
-            return current - 1
-        }
-
+        /// Step (n)
         let numbersPrefix = [
             "un": 1, "une": 1, "deux": 2, "trois": 3,
             "quatre": 4, "cinq": 5, "six": 6,
@@ -46,22 +37,26 @@ final class StepProcessor: NSObject {
             return nb - 1
         }
 
+        /// Restart
         let restartPatterns = [ "début", "commencer", "first" ]
         if hasMatchedRegexes(in: sentence, regexes: restartPatterns) {
             return 0
         }
 
+        /// Ends
         let latestPatterns = [ "dernière", "final", "last", "fin" ]
         if hasMatchedRegexes(in: sentence, regexes: latestPatterns) {
             return recipe.steps.count - 1
         }
 
-        let nextPatterns = [ "prochain", "passer", "suite", "suivant", "après", "next" ]
-        if hasMatchedRegexes(in: sentence, regexes: nextPatterns) {
+        /// Next step
+        let nextRegexes = [ "(?:étape).*(?:suivant)", "prochain", "suite", "suivant", "après", "next" ]
+        if hasMatchedRegexes(in: sentence, regexes: nextRegexes) {
             return current + 1
         }
 
-        let previousPatterns = [ "back", "retour", "reviens", "oups", "revenir", "précédent", "avant", "previous" ]
+        /// Previous step
+        let previousPatterns = [ "(?:étape).*(?:précédent)", "back", "retour", "reviens", "oups", "revenir", "précédent", "avant", "previous" ]
         if hasMatchedRegexes(in: sentence, regexes: previousPatterns) {
             return current - 1
         }
