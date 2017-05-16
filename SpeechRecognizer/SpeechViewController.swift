@@ -82,10 +82,13 @@ final class SpeechViewController: UIViewController {
     /// The recipe we walk through
     private var recipe: Recipe? {
         didSet {
-            currentStep = -1
             if let recipe = recipe {
                 recipeButton.setTitle(recipe.title, for: .normal)
                 speak(text: "Vous avez choisi \(recipe.title) !")
+                currentStep = -1
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                    self.launchTestingSet()
+//                }
             } else {
                 recipeButton.setTitle("Choisir une recette", for: .normal)
             }
@@ -218,11 +221,19 @@ final class SpeechViewController: UIViewController {
                     self.timeoutTimer = Timer.scheduledTimer(withTimeInterval: SpeechSpeakingTimeout, repeats: false) { timer in
                         print("⚠️ Speaking timeout reached")
                         self.invalidateTimeoutTimer()
-                        if let step = self.nextStep(sentence: sentence, current: self.currentStep) {
+
+                        if !sentence.lowercased().contains(SpeechSentenceToken) {
+                            self.appendToTextView("👩🏼‍🚀 (Missing 'OK chef' token, skipping)")
+                        }
+                        else if
+                            let recipe = self.recipe,
+                            let step = StepProcessor.nextStep(sentence: sentence, current: self.currentStep, in: recipe) {
+
                             self.goToStep(step)
                             self.shouldRestart = true
                             self.stopRecording()
-                        } else {
+                        }
+                        else {
                             self.appendToTextView("👨🏼‍🚀 (I didn't understand you, please try again)")
                         }
                     }
@@ -288,73 +299,6 @@ final class SpeechViewController: UIViewController {
         recordButton.setTitle("Arrêt en cours", for: .disabled)
     }
 
-    private func nextStep(sentence: String, current: Int) -> Int? {
-        guard let recipe = recipe else { return nil }
-        let sentence = sentence.lowercased()
-        if !sentence.contains(SpeechSentenceToken) {
-            appendToTextView("👩🏼‍🚀 (Missing 'OK chef' token, skipping)")
-            return nil
-        }
-
-        let nextRegexes = [ "(?:étape).*(?:suivant)" ]
-        if hasMatchedRegexes(in: sentence, regexes: nextRegexes) {
-            return current + 1
-        }
-
-        let prevRegexes = [ "(?:étape).*(?:précédent)" ]
-        if hasMatchedRegexes(in: sentence, regexes: prevRegexes) {
-            return current - 1
-        }
-
-        let numbersPrefix = [
-            "un": 1, "une": 1, "deux": 2, "trois": 3,
-            "quatre": 4, "cinq": 5, "six": 6,
-            "sept": 7, "huit": 8, "neuf": 9,
-            "initial": 1, "final": recipe.steps.count
-        ]
-        let prefixKeys = numbersPrefix.keys.joined(separator: "|")
-        let prefixRegex = "(?:étape).*(\(prefixKeys))"
-        let prefixMatches = matchesInCapturingGroups(text: sentence, pattern: prefixRegex)
-        if let nb = prefixMatches.flatMap({ numbersPrefix[$0] }).first {
-            return nb - 1
-        }
-
-        let numbersSuffix = [
-            "première": 1, "premier": 1, "deuxième": 2, "troisième": 3,
-            "quatrième": 4, "cinquième": 5, "sixième": 6,
-            "septième": 7, "huitième": 8, "neuvième": 9,
-            "dernière": recipe.steps.count
-        ]
-        let suffixKeys = numbersSuffix.keys.joined(separator: "|")
-        let numberSuffixRegex = "(\(suffixKeys).*(?:étape))"
-        let numberSuffixMatches = matchesInCapturingGroups(text: sentence, pattern: numberSuffixRegex)
-        if let nb = numberSuffixMatches.flatMap({ numbersSuffix[$0] }).first {
-            return nb - 1
-        }
-
-        let restartPatterns = [ "début", "commencer", "recommencer", "first" ]
-        if hasMatchedRegexes(in: sentence, regexes: restartPatterns) {
-            return 0
-        }
-
-        let latestPatterns = [ "dernière", "final", "last", "fin" ]
-        if hasMatchedRegexes(in: sentence, regexes: latestPatterns) {
-            return recipe.steps.count - 1
-        }
-
-        let nextPatterns = [ "prochain", "prochaine", "passer", "suite", "suivant", "après", "next" ]
-        if hasMatchedRegexes(in: sentence, regexes: nextPatterns) {
-            return current + 1
-        }
-
-        let previousPatterns = [ "back", "retour", "reviens", "oups", "revenir", "précédent", "avant", "previous" ]
-        if hasMatchedRegexes(in: sentence, regexes: previousPatterns) {
-            return current - 1
-        }
-
-        return nil
-    }
-
     private func goToStep(_ step: Int) {
         guard let recipe = recipe else { return }
         guard step >= 0 && step < recipe.steps.count else {
@@ -387,11 +331,12 @@ final class SpeechViewController: UIViewController {
     }
 
     private func launchTestingSet() {
+        guard let recipe = recipe else { return }
         var latest: TimeInterval = 0
         let sendAsync: (String) -> Void = { sentence in
             DispatchQueue.main.asyncAfter(deadline: .now() + latest) {
                 self.appendToTextView("🎤 \(sentence)")
-                if let step = self.nextStep(sentence: sentence, current: self.currentStep) {
+                if let step = StepProcessor.nextStep(sentence: sentence, current: self.currentStep, in: recipe) {
                     self.goToStep(step)
                 }
             }
@@ -433,25 +378,3 @@ extension SpeechViewController: AVSpeechSynthesizerDelegate {
     }
 }
 
-private func hasMatchedRegexes(in sentence: String, regexes: [String]) -> Bool {
-    let preprendRegexes = regexes.map { "ok.*chef.*" + $0 }
-    return preprendRegexes.first {
-        sentence.range(
-            of: $0,
-            options: [.regularExpression, .caseInsensitive],
-            range: nil,
-            locale: nil) != nil
-    } != nil
-}
-
-private func matchesInCapturingGroups(text: String, pattern: String) -> [String] {
-    let regex = "ok.*chef.*" + pattern
-    let textRange = NSRange(location: 0, length: text.characters.count)
-    guard let matches = try? NSRegularExpression(pattern: regex, options: .caseInsensitive) else {
-        return []
-    }
-    return matches.matches(in: text, options: .reportCompletion, range: textRange).map { res -> String in
-        let latestRange = res.rangeAt(res.numberOfRanges - 1)
-        return (text as NSString).substring(with: latestRange) as String
-    }
-}

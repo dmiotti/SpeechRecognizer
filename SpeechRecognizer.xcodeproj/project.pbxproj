@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		582E9B891ECB3B6B00321BE4 /* RecipeLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */; };
+		582E9B8B1ECB427A00321BE4 /* StepProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582E9B8A1ECB427A00321BE4 /* StepProcessor.swift */; };
 		5876D07E1EC9A1DD000D1E01 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5876D07D1EC9A1DD000D1E01 /* AppDelegate.swift */; };
 		5876D0801EC9A1DD000D1E01 /* SpeechViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5876D07F1EC9A1DD000D1E01 /* SpeechViewController.swift */; };
 		5876D0831EC9A1DD000D1E01 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5876D0811EC9A1DD000D1E01 /* Main.storyboard */; };
@@ -19,6 +20,7 @@
 
 /* Begin PBXFileReference section */
 		582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecipeLibrary.swift; sourceTree = "<group>"; };
+		582E9B8A1ECB427A00321BE4 /* StepProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StepProcessor.swift; sourceTree = "<group>"; };
 		5876D07A1EC9A1DD000D1E01 /* SpeechRecognizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeechRecognizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5876D07D1EC9A1DD000D1E01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5876D07F1EC9A1DD000D1E01 /* SpeechViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechViewController.swift; sourceTree = "<group>"; };
@@ -67,6 +69,7 @@
 				5876D07D1EC9A1DD000D1E01 /* AppDelegate.swift */,
 				5876D07F1EC9A1DD000D1E01 /* SpeechViewController.swift */,
 				582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */,
+				582E9B8A1ECB427A00321BE4 /* StepProcessor.swift */,
 				5876D0811EC9A1DD000D1E01 /* Main.storyboard */,
 				5876D0841EC9A1DD000D1E01 /* Assets.xcassets */,
 				5876D0861EC9A1DD000D1E01 /* LaunchScreen.storyboard */,
@@ -170,6 +173,7 @@
 			files = (
 				5876D0801EC9A1DD000D1E01 /* SpeechViewController.swift in Sources */,
 				5876D07E1EC9A1DD000D1E01 /* AppDelegate.swift in Sources */,
+				582E9B8B1ECB427A00321BE4 /* StepProcessor.swift in Sources */,
 				582E9B891ECB3B6B00321BE4 /* RecipeLibrary.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
