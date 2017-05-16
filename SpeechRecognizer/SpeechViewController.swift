@@ -17,6 +17,8 @@ import UIKit
 import Speech
 import AVKit
 
+private let sentenceToken = "ok chef"
+
 final class SpeechViewController: UIViewController {
     // MARK: Properties
 
@@ -138,7 +140,7 @@ final class SpeechViewController: UIViewController {
 
         // Configure request so that results are returned before audio recording is finished
         recognitionRequest.shouldReportPartialResults = true
-        recognitionRequest.contextualStrings = [ "oups" ]
+        recognitionRequest.contextualStrings = [ "oups", sentenceToken ]
 
         // A recognition task represents a speech recognition session.
         // We keep a reference to the task so that it can be cancelled.
@@ -159,6 +161,8 @@ final class SpeechViewController: UIViewController {
                         if try! self.processSentence() {
                             self.shouldRestart = true
                             self.stopRecording()
+                        } else {
+                            self.appendToTextView("(I didn't understand you, please try again)\n")
                         }
                     })
                 }
@@ -239,7 +243,13 @@ final class SpeechViewController: UIViewController {
             return false
         }
 
-        let sentence = result.bestTranscription.formattedString
+        let sentence = result.bestTranscription.formattedString.lowercased()
+
+        /// If the sentence doesn't contains the expected token ignore the rest
+        if !sentence.contains(sentenceToken) {
+            print("Doesn't contains \(sentenceToken) - Don't process it")
+            return false
+        }
 
         let findStrings: (_ regexes: [String]) -> Bool = { regexes -> Bool in
             return regexes.first {
@@ -271,6 +281,7 @@ final class SpeechViewController: UIViewController {
 
         // Step index
         let numberMatching = [
+            "zéro": 0,
             "un": 1, "deux": 2, "trois": 3,
             "quatre": 4, "cinq": 5, "six": 6,
             "sept": 7, "huit": 8, "neuf": 9
@@ -280,6 +291,22 @@ final class SpeechViewController: UIViewController {
         let stepMatches = matchesInCapturingGroups(text: sentence, pattern: stepIndexRegex)
         if let nb = stepMatches.first, let val = numberMatching[nb] {
             currentStep = val
+            appendToTextView(buildText(result: result))
+            lastSpeechRecognitionResult = nil
+            return true
+        }
+
+        // Restart
+        if findStrings([ "début" ]) {
+            currentStep = 0
+            appendToTextView(buildText(result: result))
+            lastSpeechRecognitionResult = nil
+            return true
+        }
+
+        // Last
+        if findStrings([ "dernière"]) {
+            currentStep = 99
             appendToTextView(buildText(result: result))
             lastSpeechRecognitionResult = nil
             return true
@@ -301,20 +328,6 @@ final class SpeechViewController: UIViewController {
             return true
         }
 
-        // Restart
-        if findStrings([ "début" ]) {
-            currentStep = 0
-            appendToTextView(buildText(result: result))
-            lastSpeechRecognitionResult = nil
-        }
-
-        // Last
-        if findStrings([ "dernière"]) {
-            currentStep = 99
-            appendToTextView(buildText(result: result))
-            lastSpeechRecognitionResult = nil
-        }
-
         return false
     }
 }
@@ -323,7 +336,7 @@ extension SpeechViewController: SFSpeechRecognizerDelegate {
     public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
         if available {
             recordButton.isEnabled = true
-            recordButton.setTitle("Start Recording", for: [])
+            recordButton.setTitle("Start Recording", for: .normal)
         } else {
             recordButton.isEnabled = false
             recordButton.setTitle("Recognition not available", for: .disabled)
