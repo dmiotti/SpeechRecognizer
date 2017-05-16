@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		582E9B891ECB3B6B00321BE4 /* RecipeLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */; };
 		5876D07E1EC9A1DD000D1E01 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5876D07D1EC9A1DD000D1E01 /* AppDelegate.swift */; };
 		5876D0801EC9A1DD000D1E01 /* SpeechViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5876D07F1EC9A1DD000D1E01 /* SpeechViewController.swift */; };
 		5876D0831EC9A1DD000D1E01 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5876D0811EC9A1DD000D1E01 /* Main.storyboard */; };
@@ -14,10 +15,10 @@
 		5876D0881EC9A1DD000D1E01 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5876D0861EC9A1DD000D1E01 /* LaunchScreen.storyboard */; };
 		5876D0941EC9F876000D1E01 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5876D0921EC9F876000D1E01 /* Fabric.framework */; };
 		5876D0951EC9F876000D1E01 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5876D0931EC9F876000D1E01 /* Crashlytics.framework */; };
-		58DADDFD1ECAEFAA0030EAFD /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58DADDFC1ECAEFAA0030EAFD /* Recipe.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecipeLibrary.swift; sourceTree = "<group>"; };
 		5876D07A1EC9A1DD000D1E01 /* SpeechRecognizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeechRecognizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5876D07D1EC9A1DD000D1E01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5876D07F1EC9A1DD000D1E01 /* SpeechViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechViewController.swift; sourceTree = "<group>"; };
@@ -28,7 +29,6 @@
 		5876D08F1EC9AF75000D1E01 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5876D0921EC9F876000D1E01 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = SOURCE_ROOT; };
 		5876D0931EC9F876000D1E01 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = SOURCE_ROOT; };
-		58DADDFC1ECAEFAA0030EAFD /* Recipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +66,7 @@
 			children = (
 				5876D07D1EC9A1DD000D1E01 /* AppDelegate.swift */,
 				5876D07F1EC9A1DD000D1E01 /* SpeechViewController.swift */,
-				58DADDFC1ECAEFAA0030EAFD /* Recipe.swift */,
+				582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */,
 				5876D0811EC9A1DD000D1E01 /* Main.storyboard */,
 				5876D0841EC9A1DD000D1E01 /* Assets.xcassets */,
 				5876D0861EC9A1DD000D1E01 /* LaunchScreen.storyboard */,
@@ -168,9 +168,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				58DADDFD1ECAEFAA0030EAFD /* Recipe.swift in Sources */,
 				5876D0801EC9A1DD000D1E01 /* SpeechViewController.swift in Sources */,
 				5876D07E1EC9A1DD000D1E01 /* AppDelegate.swift in Sources */,
+				582E9B891ECB3B6B00321BE4 /* RecipeLibrary.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

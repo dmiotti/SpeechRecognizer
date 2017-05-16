@@ -23,17 +23,24 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="CCU-0k-ioM">
-                                <rect key="frame" x="16" y="28" width="343" height="20.5"/>
+                                <rect key="frame" x="16" y="28" width="343" height="30"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Étape: 0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3MH-Ht-sS1">
-                                        <rect key="frame" x="0.0" y="0.0" width="139" height="20.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="89.5" height="30"/>
                                         <accessibility key="accessibilityConfiguration" hint="Présente l'étape actuelle" label="Étape actuelle"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Locale fr_FR" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qz0-hN-U8r">
-                                        <rect key="frame" x="139" y="0.0" width="204" height="20.5"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ezN-xb-5EW">
+                                        <rect key="frame" x="89.5" y="0.0" width="183" height="30"/>
+                                        <state key="normal" title="Choisir une recette"/>
+                                        <connections>
+                                            <action selector="recipesButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bSZ-ng-6gI"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(fr_FR)" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qz0-hN-U8r">
+                                        <rect key="frame" x="272.5" y="0.0" width="70.5" height="30"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -41,10 +48,10 @@
                                 </subviews>
                             </stackView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="woY-Og-tj7" userLabel="TextView Container">
-                                <rect key="frame" x="16" y="56.5" width="343" height="552.5"/>
+                                <rect key="frame" x="16" y="66" width="343" height="543"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D3d-Nh-SPI">
-                                        <rect key="frame" x="0.0" y="0.0" width="343" height="552.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="343" height="543"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
                                     </textView>
@@ -83,6 +90,7 @@
                     <connections>
                         <outlet property="currentStepLabel" destination="3MH-Ht-sS1" id="dfc-ou-lqT"/>
                         <outlet property="localeLabel" destination="Qz0-hN-U8r" id="pLI-WN-Rsh"/>
+                        <outlet property="recipeButton" destination="ezN-xb-5EW" id="oH2-kH-vJC"/>
                         <outlet property="recordButton" destination="wXk-Vq-rSK" id="b30-be-vCx"/>
                         <outlet property="textView" destination="D3d-Nh-SPI" id="kQo-la-lWH"/>
                     </connections>

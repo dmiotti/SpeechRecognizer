@@ -31,6 +31,8 @@ final class SpeechViewController: UIViewController {
 
     @IBOutlet weak var currentStepLabel: UILabel!
 
+    @IBOutlet weak var recipeButton: UIButton!
+
     // MARK: Recognizer Properties
 
     private lazy var speechRecognizer: SFSpeechRecognizer? = {
@@ -75,23 +77,30 @@ final class SpeechViewController: UIViewController {
 
     // MARK: Model Properties
 
+    private var recipes = RecipeLibrary.shared.recipies
+
     /// The recipe we walk through
-    private var recipe = Recipe(title: "Nems aux fraises", description: "Dessert facile et bon marché. Végétarien", steps: [
-        "Laver les fraises sous l'eau et les équeuter.",
-        "Les couper en morceaux dans un saladier et les saupoudrer de sucre.",
-        "Etaler vos feuilles de brick sur un plan de travail et couper les en deux.",
-        "Beurrer les feuilles de brick à l'aide d'un pinceau et déposer au centre quelques morceaux de fraises au sucre.",
-        "Poser dessus une cuillère à café de crème pâtissière et rouler les feuilles de brick comme un nem.",
-        "Chaque convive trempera ses nems dans le coulis de fruits rouges froid."
-    ])
+    private var recipe: Recipe? {
+        didSet {
+            currentStep = -1
+            if let recipe = recipe {
+                recipeButton.setTitle(recipe.title, for: .normal)
+                speak(text: "Vous avez choisi \(recipe.title) !")
+            } else {
+                recipeButton.setTitle("Choisir une recette", for: .normal)
+            }
+        }
+    }
 
     // The current `recipe.step`
     private var currentStep = 0 {
         didSet {
-            let str = "Étape: \(currentStep + 1)"
-            currentStepLabel.text = str
-            appendToTextView("➡️ \(str)")
-            speak(at: currentStep)
+            if currentStep >= 0 {
+                let str = "Étape: \(currentStep + 1)"
+                currentStepLabel.text = str
+                appendToTextView("➡️ \(str)")
+                speak(at: currentStep)
+            }
         }
     }
 
@@ -100,7 +109,7 @@ final class SpeechViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        localeLabel.text = "Locale \(Locale.current.identifier)"
+        localeLabel.text = "(\(Locale.current.identifier))"
 
         // Disable the record buttons until authorization has been granted.
         recordButton.isEnabled = false
@@ -143,8 +152,6 @@ final class SpeechViewController: UIViewController {
                 }
             }
         }
-
-
     }
 
     // MARK: Interface Builder actions
@@ -159,6 +166,19 @@ final class SpeechViewController: UIViewController {
                 print("Error while starting recording: \(err)")
             }
         }
+    }
+
+    @IBAction func recipesButtonTapped(_ sender: Any) {
+        let actionSheet = UIAlertController(title: "Choisir une recette", message: nil, preferredStyle: .actionSheet)
+        recipes.forEach { recipe in
+            let action = UIAlertAction(title: recipe.title, style: .default) { _ in
+                self.recipe = recipe
+            }
+            actionSheet.addAction(action)
+        }
+        let cancelAction = UIAlertAction(title: "Annuler", style: .default, handler: nil)
+        actionSheet.addAction(cancelAction)
+        present(actionSheet, animated: true)
     }
 
     // MARK: Private methods
@@ -203,13 +223,15 @@ final class SpeechViewController: UIViewController {
                             self.shouldRestart = true
                             self.stopRecording()
                         } else {
-                            self.appendToTextView("👩🏼‍🚀 (I didn't understand you, please try again)")
+                            self.appendToTextView("👨🏼‍🚀 (I didn't understand you, please try again)")
                         }
                     }
                 }
             }
 
             if error != nil || isFinal {
+                self.appendToTextView("👨🏼‍🚀 (Nah, I'm stopping listening you)")
+
                 self.invalidateTimeoutTimer()
 
                 self.audioEngine.stop()
@@ -222,8 +244,6 @@ final class SpeechViewController: UIViewController {
                 self.recordButton.setTitle("Commencer l'enregistrement", for: .normal)
 
                 self.isStopping = false
-
-                self.appendToTextView("👩🏼‍🚀 (Nah, I'm stopping listening you)")
 
                 if let error = error {
                     print("\(Date()) Error while recognizing: \(error)")
@@ -248,7 +268,7 @@ final class SpeechViewController: UIViewController {
         
         try audioEngine.start()
 
-        appendToTextView("👩🏼‍🚀 (Go ahead, I'm listening)")
+        appendToTextView("👨🏼‍🚀 (Go ahead, I'm listening)")
     }
 
     private func invalidateTimeoutTimer() {
@@ -269,6 +289,7 @@ final class SpeechViewController: UIViewController {
     }
 
     private func nextStep(sentence: String, current: Int) -> Int? {
+        guard let recipe = recipe else { return nil }
         let sentence = sentence.lowercased()
         if !sentence.contains(SpeechSentenceToken) {
             appendToTextView("👩🏼‍🚀 (Missing 'OK chef' token, skipping)")
@@ -335,6 +356,7 @@ final class SpeechViewController: UIViewController {
     }
 
     private func goToStep(_ step: Int) {
+        guard let recipe = recipe else { return }
         guard step >= 0 && step < recipe.steps.count else {
             speak(text: "Il n'y a pas d'étape \(step + 1)")
             return
@@ -347,6 +369,7 @@ final class SpeechViewController: UIViewController {
     }
 
     private func speak(at step: Int) {
+        guard let recipe = recipe else { return }
         var sentences = [String]()
         if step == 0 {
             sentences.append(recipe.title)
