@@ -44,7 +44,7 @@ final class StepProcessor: NSObject {
         }
 
         /// Ends
-        let latestPatterns = [ "dernière", "final", "last", "fin" ]
+        let latestPatterns = [ "dernière", "last", "fin" ]
         if hasMatchedRegexes(in: sentence, regexes: latestPatterns) {
             return recipe.steps.count - 1
         }
