@@ -252,7 +252,7 @@ final class SpeechViewController: UIViewController {
         }
 
         // Next using regex
-        let nextRegexes = [ "(?:passer|aller).*(?:étape).*(?:suivant)" ]
+        let nextRegexes = [ "(?:passer|aller)*.*(?:étape).*(?:suivant)" ]
         if findStrings(nextRegexes) {
             currentStep += 1
             appendToTextView(buildText(result: result))
@@ -261,7 +261,7 @@ final class SpeechViewController: UIViewController {
         }
 
         // Prev using regex
-        let prevRegexes = [ "(?:passer|aller).*(?:étape).*(?:précédent)" ]
+        let prevRegexes = [ "(?:passer|aller)*.*(?:étape).*(?:précédent)" ]
         if findStrings(prevRegexes) {
             currentStep -= 1
             appendToTextView(buildText(result: result))
@@ -276,7 +276,7 @@ final class SpeechViewController: UIViewController {
             "sept": 7, "huit": 8, "neuf": 9
         ]
         let allKeys = numberMatching.keys.joined(separator: "|")
-        let stepIndexRegex = "(?:passer|aller).*(?:étape)*.*(\(allKeys))"
+        let stepIndexRegex = "(?:passer|aller)*.*(?:étape)*.*(\(allKeys))"
         let stepMatches = matchesInCapturingGroups(text: sentence, pattern: stepIndexRegex)
         if let nb = stepMatches.first, let val = numberMatching[nb] {
             currentStep = val
