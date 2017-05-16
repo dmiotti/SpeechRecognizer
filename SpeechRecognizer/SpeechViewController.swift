@@ -184,6 +184,15 @@ final class SpeechViewController: UIViewController {
         present(actionSheet, animated: true)
     }
 
+    @IBAction func refreshButtonTapped(_ sender: Any) {
+        let pending = UIAlertController(title: "Refreshing regular expressions", message: "Use network it can be slow", preferredStyle: .alert)
+        present(pending, animated: true)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            self.dismiss(animated: true)
+        }
+    }
+
     // MARK: Private methods
 
     private func startRecording() throws {
