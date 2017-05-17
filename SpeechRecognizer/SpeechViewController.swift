@@ -20,7 +20,6 @@ final class SpeechViewController: UIViewController {
     fileprivate lazy var stepRecognizer: StepRecognizer = {
         return StepRecognizer()
     }()
-    fileprivate var shouldRecord = false
 
     // MARK: Speaker Properties
 
@@ -68,11 +67,9 @@ final class SpeechViewController: UIViewController {
     // MARK: Interface Builder actions
 
     @IBAction func recordButtonTapped() {
-        if shouldRecord {
-            shouldRecord = false
+        if stepRecognizer.isRunning {
             stepRecognizer.stopRecording()
         } else {
-            shouldRecord = true
             try? stepRecognizer.startRecording()
         }
     }
@@ -147,36 +144,21 @@ final class SpeechViewController: UIViewController {
         }
         sentences.forEach(speaker.speak)
     }
-}
 
-extension SpeechViewController: SpeakerDelegate {
-    func speaker(speaker: Speaker, didSpeak sentence: String) {
-        appendToTextView("🔊 \(sentence)")
-    }
-
-    func speakerDidFinishSpeaking(speaker: Speaker) {
-        if shouldRecord {
-            try? stepRecognizer.startRecording()
-        }
-    }
-}
-
-extension SpeechViewController: StepRecognizerDelegate {
-    func stepSpeech(recognizer: StepRecognizer, availabilityDidChanged available: Bool) {
-        if available {
-            recordButton.isEnabled = true
-            recordButton.setTitle("Start recording", for: .normal)
-        } else {
-            recordButton.isEnabled = false
-            recordButton.setTitle("Voice recognizer unavailable", for: .disabled)
-        }
-    }
-
-    func stepSpeech(recognizer: StepRecognizer, authorizationDidChange status: StepRecognizerAuthorizationStatus) {
-        switch status {
+    fileprivate func refreshRecordButton() {
+        switch stepRecognizer.authorizationStatus {
         case .authorized:
-            recordButton.setTitle("Start recording", for: .normal)
-            recordButton.isEnabled = true
+            if stepRecognizer.isAvailable {
+                recordButton.isEnabled = true
+                if stepRecognizer.isRunning {
+                    recordButton.setTitle("Stop recording", for: .normal)
+                } else {
+                    recordButton.setTitle("Start recording", for: .normal)
+                }
+            } else {
+                recordButton.isEnabled = false
+                recordButton.setTitle("Voice recognizer unavailable", for: .disabled)
+            }
         case .denied:
             recordButton.isEnabled = false
             recordButton.setTitle("User denied access to speech recognition", for: .disabled)
@@ -187,6 +169,26 @@ extension SpeechViewController: StepRecognizerDelegate {
             recordButton.isEnabled = false
             recordButton.setTitle("Speech recognition not yet authorized", for: .disabled)
         }
+    }
+}
+
+extension SpeechViewController: SpeakerDelegate {
+    func speaker(speaker: Speaker, didSpeak sentence: String) {
+        appendToTextView("🔊 \(sentence)")
+    }
+
+    func speakerDidFinishSpeaking(speaker: Speaker) {
+        try? stepRecognizer.startRecording()
+    }
+}
+
+extension SpeechViewController: StepRecognizerDelegate {
+    func stepSpeech(recognizer: StepRecognizer, availabilityDidChanged available: Bool) {
+        refreshRecordButton()
+    }
+
+    func stepSpeech(recognizer: StepRecognizer, authorizationDidChange status: StepRecognizerAuthorizationStatus) {
+        refreshRecordButton()
     }
 
     func stepSpeech(recognizer: StepRecognizer, didRecognize move: StepMove, for sentence: String) {
@@ -205,13 +207,16 @@ extension SpeechViewController: StepRecognizerDelegate {
 
     func stepSpeechDidStartRecording(recognizer: StepRecognizer) {
         appendToTextView("👨🏼‍🚀 (Go ahead, I'm listening)")
-        recordButton.setTitle("Stop recording", for: .normal)
+        refreshRecordButton()
     }
 
     func stepSpeechDidStopRecording(recognizer: StepRecognizer) {
-        recordButton.isEnabled = true
-        recordButton.setTitle("Start recording", for: .normal)
+        refreshRecordButton()
         appendToTextView("👨🏼‍🚀 (Nah, I'm stopping listening you)")
+    }
+
+    func stepSpeech(recognizer: StepRecognizer, didFail error: Error) {
+        appendToTextView("⚠️ \(error.localizedDescription)")
     }
 }
 

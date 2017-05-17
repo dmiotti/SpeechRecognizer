@@ -20,6 +20,7 @@ protocol StepRecognizerDelegate: class {
     func stepSpeech(recognizer: StepRecognizer, didRecognize move: StepMove, for sentence: String)
     func stepSpeechDidStartRecording(recognizer: StepRecognizer)
     func stepSpeechDidStopRecording(recognizer: StepRecognizer)
+    func stepSpeech(recognizer: StepRecognizer, didFail error: Error)
 }
 
 final class StepRecognizer: NSObject {
@@ -74,6 +75,17 @@ final class StepRecognizer: NSObject {
 
     var isRunning: Bool {
         return audioEngine.isRunning
+    }
+
+    var isAvailable: Bool {
+        if let available = speechRecognizer?.isAvailable {
+            return available
+        }
+        return false
+    }
+
+    var authorizationStatus: StepRecognizerAuthorizationStatus {
+        return SFSpeechRecognizer.authorizationStatus()
     }
 
     func stopRecording() {
@@ -133,8 +145,8 @@ final class StepRecognizer: NSObject {
             }
         }
         if let error = error {
-            print("Error while recognizing: \(error)")
             self.stopRecording()
+            self.delegate?.stepSpeech(recognizer: self, didFail: error)
         }
     }
 
