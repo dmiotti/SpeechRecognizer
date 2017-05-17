@@ -134,6 +134,7 @@ final class StepRecognizer: NSObject {
         }
         if let error = error {
             print("Error while recognizing: \(error)")
+            self.stopRecording()
         }
     }
 
