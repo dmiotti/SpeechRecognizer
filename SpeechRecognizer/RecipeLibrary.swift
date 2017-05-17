@@ -48,7 +48,7 @@ final class RecipeLibrary {
             ])
         recipies.append(tagliatellesAuxChocolat)
 
-        let amourDeSaumonEnPapillote = Recipe(title: "Amour de saumon en papillote", description: "lat principal - Très facile - Moyen", steps: [
+        let amourDeSaumonEnPapillote = Recipe(title: "Amour de saumon en papillote", description: "Plat principal - Très facile - Moyen", steps: [
             "Préchauffer le four à 180°C (thermostat 6).",
             "Laver, essorer et ciseler l'aneth. Peler et émincer la gousse d'ail finement. Réserver.",
             "Couper les tomates cerise en deux.",

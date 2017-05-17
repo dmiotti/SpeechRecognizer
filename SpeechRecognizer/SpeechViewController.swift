@@ -18,7 +18,7 @@ import Speech
 import AVKit
 
 private let SpeechSentenceToken = "ok chef"
-private let SpeechSpeakingTimeout: TimeInterval = 3
+private let SpeechSpeakingTimeout: TimeInterval = 2
 
 final class SpeechViewController: UIViewController {
     // MARK: UI Properties
@@ -81,14 +81,12 @@ final class SpeechViewController: UIViewController {
 
     /// The recipe we walk through
     private var recipe: Recipe? {
-        didSet {
+        didSet {        
             if let recipe = recipe {
                 recipeButton.setTitle(recipe.title, for: .normal)
                 speak(text: "Vous avez choisi \(recipe.title) !")
                 currentStep = -1
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                    self.launchTestingSet()
-//                }
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: launchTestSuite)
             } else {
                 recipeButton.setTitle("Choisir une recette", for: .normal)
             }
@@ -228,6 +226,7 @@ final class SpeechViewController: UIViewController {
             if let result = result {
                 let sentence = result.bestTranscription.formattedString
                 print("🎤 \(sentence)")
+
                 let hasChanged = self.lastSpeechRecognitionResult?.bestTranscription.formattedString != result.bestTranscription.formattedString
                 self.lastSpeechRecognitionResult = result
                 isFinal = result.isFinal
@@ -239,17 +238,10 @@ final class SpeechViewController: UIViewController {
 
                         if !sentence.lowercased().contains(SpeechSentenceToken) {
                             self.appendToTextView("👩🏼‍🚀 (Missing 'OK chef' token, skipping)")
-                        }
-                        else if
-                            let recipe = self.recipe,
-                            let step = StepProcessor.nextStep(sentence: sentence, current: self.currentStep, in: recipe) {
+                        } else {
                             self.appendToTextView("🎤 \(sentence)")
-                            self.goToStep(step)
-                            self.shouldRestart = true
-                            self.stopRecording()
-                        }
-                        else {
-                            self.appendToTextView("👨🏼‍🚀 (I didn't understand you, please try again)")
+                            let stepMove = StepProcessor.nextStep(sentence: sentence)
+                            self.applyStep(move: stepMove)
                         }
                     }
                 }
@@ -316,6 +308,26 @@ final class SpeechViewController: UIViewController {
         recordButton.setTitle("Arrêt en cours", for: .disabled)
     }
 
+    private func applyStep(move: StepMove) {
+        guard let recipe = recipe else {
+            return
+        }
+        switch move {
+        case .at(let position):
+            goToStep(position - 1)
+        case .beginning:
+            goToStep(0)
+        case .end:
+            goToStep(recipe.steps.count - 1)
+        case .next:
+            goToStep(currentStep + 1)
+        case .previous:
+            goToStep(currentStep - 1)
+        case .none:
+            break
+        }
+    }
+
     private func goToStep(_ step: Int) {
         guard let recipe = recipe else { return }
         guard step >= 0 && step < recipe.steps.count else {
@@ -323,10 +335,8 @@ final class SpeechViewController: UIViewController {
             return
         }
         currentStep = step
-    }
-
-    private func getUtterance(text: String) -> AVSpeechUtterance {
-        return AVSpeechUtterance(string: text)
+        shouldRestart = true
+        stopRecording()
     }
 
     private func speak(at step: Int) {
@@ -342,38 +352,35 @@ final class SpeechViewController: UIViewController {
     }
 
     private func speak(text: String) {
-        let utt = getUtterance(text: text)
+        let utt = AVSpeechUtterance(string: text)
         utt.postUtteranceDelay = 1
         speechSynthesizer.speak(utt)
     }
 
-    private func launchTestingSet() {
-        guard let recipe = recipe else { return }
+    private func launchTestSuite() {
         var latest: TimeInterval = 0
         let sendAsync: (String) -> Void = { sentence in
             DispatchQueue.main.asyncAfter(deadline: .now() + latest) {
                 self.appendToTextView("🎤 \(sentence)")
-                if let step = StepProcessor.nextStep(sentence: sentence, current: self.currentStep, in: recipe) {
-                    self.goToStep(step)
-                }
+                self.applyStep(move: StepProcessor.nextStep(sentence: sentence))
             }
             latest = latest + 20
         }
 
-        sendAsync("OK chef, Commencer")
-        sendAsync("OK chef, Prochaine étape")
-        sendAsync("OK chef, Étape suivante")
-        sendAsync("OK chef, Étape précédente")
-        sendAsync("OK chef, Dernière étape")
-        sendAsync("OK chef, Cinquième étape")
-        sendAsync("OK chef, Étape une")
-        sendAsync("OK chef, Revenir au début")
-        sendAsync("OK chef, Étape huit")
-        sendAsync("Troisième étape")
-        sendAsync("OK chef, Première étape")
-        sendAsync("OK chef, Étape initiale")
-        sendAsync("OK chef, Étape finale")
-        sendAsync("Revenir au début. OK chef, Étape finale")
+        sendAsync("OK chef, Commencer") // -> 1
+        sendAsync("OK chef, Prochaine étape") // -> 2
+        sendAsync("OK chef, Étape suivante") // -> 3
+        sendAsync("OK chef, Étape précédente") // -> 2
+        sendAsync("OK chef, Dernière étape") // -> 7
+        sendAsync("OK chef, Cinquième étape") // -> 5
+        sendAsync("OK chef, Étape une") // -> 1
+        sendAsync("OK chef, Revenir au début") // -> 1
+        sendAsync("OK chef, Étape huit") // -> Pas d'étape 7
+        sendAsync("Troisième étape") // -> 3ème étape
+        sendAsync("OK chef, Première étape") // -> Étape 1
+        sendAsync("OK chef, Étape initiale") // -> Étape 1
+        sendAsync("OK chef, Étape finale") // -> Étape 7
+        sendAsync("Revenir au début. OK chef, Étape finale") // -> Étape 7
     }
 }
 

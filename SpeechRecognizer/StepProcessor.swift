@@ -8,6 +8,15 @@
 
 import UIKit
 
+enum StepMove {
+    case beginning
+    case next
+    case previous
+    case at(position: Int)
+    case end
+    case none
+}
+
 final class StepProcessor: NSObject {
     static var stepNRegex = [String]()
     static var startRegex = [String]()
@@ -15,81 +24,51 @@ final class StepProcessor: NSObject {
     static var nextRegex = [String]()
     static var previousRegex = [String]()
 
-    class func nextStep(sentence: String, current: Int, in recipe: Recipe) -> Int? {
-        /// Step (n)
-        let numbersPrefix = [
-            "un": 1, "une": 1, "deux": 2, "trois": 3,
-            "quatre": 4, "cinq": 5, "six": 6,
-            "sept": 7, "huit": 8, "neuf": 9, "dix": 10, "onze": 11,
-            "initial": 1, "final": recipe.steps.count
-        ]
-        let prefixKeys = numbersPrefix.keys.joined(separator: "|")
-        let prefixRegex = "(?:étape).*(\(prefixKeys))"
-        let prefixMatches = matchesInCapturingGroups(text: sentence, pattern: prefixRegex)
-        if let nb = prefixMatches.flatMap({ numbersPrefix[$0] }).first {
-            return nb - 1
+    static var numberFormatter: NumberFormatter = {
+        let number = NumberFormatter()
+        number.locale = Locale.current
+        number.numberStyle = .spellOut
+        return number
+    }()
+
+    class func nextStep(sentence: String) -> StepMove {
+        let matches = stepNRegex.flatMap { matchesIn(sentence, with: $0) }
+        if let firstMatch = matches.first, let matchedNumber = numberFormatter.number(from: firstMatch.lowercased()) {
+            return .at(position: matchedNumber.intValue)
         }
 
-        let numbersSuffix = [
-            "première": 1, "premier": 1, "deuxième": 2, "troisième": 3,
-            "quatrième": 4, "cinquième": 5, "sixième": 6,
-            "septième": 7, "huitième": 8, "neuvième": 9, "dixième": 10, "onzième": 11,
-            "dernière": recipe.steps.count
-        ]
-        let suffixKeys = numbersSuffix.keys.joined(separator: "|")
-        let numberSuffixRegex = "(\(suffixKeys).*(?:étape))"
-        let numberSuffixMatches = matchesInCapturingGroups(text: sentence, pattern: numberSuffixRegex)
-        if let nb = numberSuffixMatches.flatMap({ numbersSuffix[$0] }).first {
-            return nb - 1
+        if let _ = startRegex.first(where: { !matchesIn(sentence, with: $0).isEmpty }) {
+            return .beginning
         }
 
-        /// Restart
-        let restartPatterns = [ "début", "commenc", "first" ]
-        if hasMatchedRegexes(in: sentence, regexes: restartPatterns) {
-            return 0
+        if let _ = endRegex.first(where: { !matchesIn(sentence, with: $0).isEmpty }) {
+            return .end
         }
 
-        /// Ends
-        let latestPatterns = [ "dernière", "last", "fin" ]
-        if hasMatchedRegexes(in: sentence, regexes: latestPatterns) {
-            return recipe.steps.count - 1
+        if let _ = nextRegex.first(where: { !matchesIn(sentence, with: $0).isEmpty }) {
+            return .next
         }
 
-        /// Next step
-        let nextRegexes = [ "(?:étape).*(?:suivant)", "prochain", "suite", "suivant", "après", "next" ]
-        if hasMatchedRegexes(in: sentence, regexes: nextRegexes) {
-            return current + 1
+        if let _ = previousRegex.first(where: { !matchesIn(sentence, with: $0).isEmpty }) {
+            return .previous
         }
 
-        /// Previous step
-        let previousPatterns = [ "(?:étape).*(?:précédent)", "back", "retour", "reviens", "oups", "revenir", "précédent", "avant", "previous" ]
-        if hasMatchedRegexes(in: sentence, regexes: previousPatterns) {
-            return current - 1
-        }
-        
-        return nil
+        return .none
     }
 }
 
-private func hasMatchedRegexes(in sentence: String, regexes: [String]) -> Bool {
-    let preprendRegexes = regexes.map { "ok.*chef.*" + $0 }
-    return preprendRegexes.first {
-        sentence.range(
-            of: $0,
-            options: [.regularExpression, .caseInsensitive],
-            range: nil,
-            locale: nil) != nil
-        } != nil
-}
-
-private func matchesInCapturingGroups(text: String, pattern: String) -> [String] {
-    let regex = "ok.*chef.*" + pattern
+private func matchesIn(_ text: String, with pattern: String) -> [String] {
     let textRange = NSRange(location: 0, length: text.characters.count)
-    guard let matches = try? NSRegularExpression(pattern: regex, options: .caseInsensitive) else {
+    guard let matches = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else {
         return []
     }
-    return matches.matches(in: text, options: .reportCompletion, range: textRange).map { res -> String in
-        let latestRange = res.rangeAt(res.numberOfRanges - 1)
-        return (text as NSString).substring(with: latestRange) as String
+    return matches.matches(in: text, options: .reportCompletion, range: textRange).flatMap { res -> [String] in
+        var matched = [String]()
+        for i in 0..<res.numberOfRanges {
+            let range = res.rangeAt(i)
+            let str = (text as NSString).substring(with: range) as String
+            matched.append(str)
+        }
+        return matched
     }
 }
