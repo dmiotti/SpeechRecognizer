@@ -59,20 +59,6 @@ final class StepRecognizer: NSObject {
     /// It's reseted when the user continue speaking
     private var timeoutTimer: Timer?
 
-    func setup() {
-        do {
-            let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
-            try audioSession.setMode(AVAudioSessionModeMeasurement)
-            try audioSession.overrideOutputAudioPort(.speaker)
-            try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
-        } catch let err {
-            print("Error while configuring AVAudioSession: \(err)")
-        }
-
-        checkAuthorizationStatus()
-    }
-
     var isRunning: Bool {
         return audioEngine.isRunning
     }
@@ -86,6 +72,22 @@ final class StepRecognizer: NSObject {
 
     var authorizationStatus: StepRecognizerAuthorizationStatus {
         return SFSpeechRecognizer.authorizationStatus()
+    }
+
+    // MARK: - Public functions
+
+    func setup() {
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
+            try audioSession.setMode(AVAudioSessionModeMeasurement)
+            try audioSession.overrideOutputAudioPort(.speaker)
+            try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
+        } catch let err {
+            print("Error while configuring AVAudioSession: \(err)")
+        }
+
+        checkAuthorizationStatus()
     }
 
     func stopRecording() {
@@ -130,6 +132,8 @@ final class StepRecognizer: NSObject {
 
         delegate?.stepSpeechDidStartRecording(recognizer: self)
     }
+
+    // MARK: - Private functions
 
     private func recognize(result: SFSpeechRecognitionResult?, error: Error?) {
         guard audioEngine.isRunning else { return }
