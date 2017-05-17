@@ -28,6 +28,7 @@ func loadCSV(completion: @escaping (Void) -> Void) {
             var end = [String]()
             var next = [String]()
             var previous = [String]()
+            var repeatRegex = [String]()
 
             while let _ = csv.next() {
                 if let val = csv["Step(N)"], !val.isEmpty {
@@ -45,6 +46,9 @@ func loadCSV(completion: @escaping (Void) -> Void) {
                 if let val = csv["Previous"], !val.isEmpty {
                     previous.append(val)
                 }
+                if let val = csv["Repeat"], !val.isEmpty {
+                    repeatRegex.append(val)
+                }
             }
 
             StepProcessor.stepNRegex = stepN
@@ -52,6 +56,7 @@ func loadCSV(completion: @escaping (Void) -> Void) {
             StepProcessor.endRegex = end
             StepProcessor.nextRegex = next
             StepProcessor.previousRegex = previous
+            StepProcessor.repeatRegex = repeatRegex
 
             DispatchQueue.main.async(execute: completion)
         } catch let err {

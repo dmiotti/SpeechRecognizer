@@ -14,6 +14,7 @@ enum StepMove {
     case previous
     case at(position: Int)
     case end
+    case `repeat`
     case none
 }
 
@@ -23,6 +24,7 @@ final class StepProcessor: NSObject {
     static var endRegex = [String]()
     static var nextRegex = [String]()
     static var previousRegex = [String]()
+    static var repeatRegex = [String]()
 
     static var numberFormatter: NumberFormatter = {
         let number = NumberFormatter()
@@ -52,6 +54,10 @@ final class StepProcessor: NSObject {
 
         if let _ = previousRegex.first(where: { !matchesIn(sentence, with: $0).isEmpty }) {
             return .previous
+        }
+
+        if let _ = repeatRegex.first(where: { !matchesIn(sentence, with: $0).isEmpty }) {
+            return .repeat
         }
 
         return .none

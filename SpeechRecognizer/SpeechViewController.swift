@@ -39,8 +39,7 @@ final class SpeechViewController: UIViewController {
         didSet {        
             if let recipe = recipe {
                 recipeButton.setTitle(recipe.title, for: .normal)
-                speaker.speak(text: "Vous avez choisi \(recipe.title) !")
-                currentStep = -1
+                applyStep(move: .beginning)
             } else {
                 recipeButton.setTitle("Pick a recipe", for: .normal)
             }
@@ -110,7 +109,7 @@ final class SpeechViewController: UIViewController {
     fileprivate func applyStep(move: StepMove) {
         guard let recipe = recipe else { return }
         let goToStep: (Int) -> Void = { step in
-            guard step >= 0 && step < recipe.steps.count else {
+            guard step >= -1 && step < recipe.steps.count else {
                 self.speaker.speak(text: "Il n'y a pas d'étape \(step + 1)")
                 return
             }
@@ -122,13 +121,15 @@ final class SpeechViewController: UIViewController {
         case .at(let position):
             goToStep(position - 1)
         case .beginning:
-            goToStep(0)
+            goToStep(-1)
         case .end:
             goToStep(recipe.steps.count - 1)
         case .next:
             goToStep(currentStep + 1)
         case .previous:
             goToStep(currentStep - 1)
+        case .repeat:
+            goToStep(currentStep)
         case .none:
             break
         }
@@ -137,12 +138,13 @@ final class SpeechViewController: UIViewController {
     private func speak(at step: Int) {
         guard let recipe = recipe else { return }
         var sentences = [String]()
-        if step == 0 {
+        if step == -1 {
             sentences.append(recipe.title)
             sentences.append(recipe.description)
+        } else {
+            sentences.append("Étape \(step + 1)")
+            sentences.append(recipe.steps[step])
         }
-        sentences.append("Étape \(step + 1)")
-        sentences.append(recipe.steps[step])
         sentences.forEach(speaker.speak)
     }
 }
