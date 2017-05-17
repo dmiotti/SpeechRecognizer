@@ -25,29 +25,29 @@
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="CCU-0k-ioM">
                                 <rect key="frame" x="16" y="28" width="343" height="30"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Étape: 0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3MH-Ht-sS1">
-                                        <rect key="frame" x="0.0" y="0.0" width="73.5" height="30"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" text="Étape: 0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3MH-Ht-sS1">
+                                        <rect key="frame" x="0.0" y="0.0" width="85.5" height="30"/>
                                         <accessibility key="accessibilityConfiguration" hint="Présente l'étape actuelle" label="Étape actuelle"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ezN-xb-5EW">
-                                        <rect key="frame" x="78.5" y="0.0" width="150.5" height="30"/>
-                                        <state key="normal" title="Choisir une recette"/>
+                                        <rect key="frame" x="90.5" y="0.0" width="118.5" height="30"/>
+                                        <state key="normal" title="Pick a recipe"/>
                                         <connections>
                                             <action selector="recipesButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bSZ-ng-6gI"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ewj-Q2-9A3">
-                                        <rect key="frame" x="234" y="0.0" width="61" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ewj-Q2-9A3">
+                                        <rect key="frame" x="214" y="0.0" width="71.5" height="30"/>
                                         <state key="normal" title="Refresh"/>
                                         <connections>
                                             <action selector="refreshButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ffh-z3-8it"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(fr_FR)" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qz0-hN-U8r">
-                                        <rect key="frame" x="300" y="0.0" width="43" height="30"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" text="(fr_FR)" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qz0-hN-U8r">
+                                        <rect key="frame" x="290.5" y="0.0" width="52.5" height="30"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -74,7 +74,7 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wXk-Vq-rSK">
                                 <rect key="frame" x="16" y="617" width="343" height="30"/>
                                 <accessibility key="accessibilityConfiguration" hint="Commencer ou arrêter l'enregistrement" label="Bouton d'enregistrement"/>
-                                <state key="normal" title="Commencer l'enregistrement"/>
+                                <state key="normal" title="Start recording"/>
                                 <connections>
                                     <action selector="recordButtonTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="is2-Zu-P9S"/>
                                 </connections>

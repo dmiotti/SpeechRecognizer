@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		582E9B891ECB3B6B00321BE4 /* RecipeLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */; };
 		582E9B8B1ECB427A00321BE4 /* StepProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582E9B8A1ECB427A00321BE4 /* StepProcessor.swift */; };
+		584DC5241ECC7C8F005161CB /* StepRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584DC5231ECC7C8F005161CB /* StepRecognizer.swift */; };
+		584DC5261ECC83F5005161CB /* Speaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584DC5251ECC83F5005161CB /* Speaker.swift */; };
 		58706A071ECB4EE000AD0441 /* CSVImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58706A061ECB4EE000AD0441 /* CSVImporter.swift */; };
 		58706A0A1ECB54B800AD0441 /* CSV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58706A081ECB542200AD0441 /* CSV.framework */; };
 		58706A0B1ECB54B800AD0441 /* CSV.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 58706A081ECB542200AD0441 /* CSV.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -38,6 +40,8 @@
 /* Begin PBXFileReference section */
 		582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecipeLibrary.swift; sourceTree = "<group>"; };
 		582E9B8A1ECB427A00321BE4 /* StepProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StepProcessor.swift; sourceTree = "<group>"; };
+		584DC5231ECC7C8F005161CB /* StepRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StepRecognizer.swift; sourceTree = "<group>"; };
+		584DC5251ECC83F5005161CB /* Speaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Speaker.swift; sourceTree = "<group>"; };
 		58706A061ECB4EE000AD0441 /* CSVImporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CSVImporter.swift; sourceTree = "<group>"; };
 		58706A081ECB542200AD0441 /* CSV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CSV.framework; path = Carthage/Build/iOS/CSV.framework; sourceTree = SOURCE_ROOT; };
 		5876D07A1EC9A1DD000D1E01 /* SpeechRecognizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeechRecognizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -66,6 +70,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		584DC5271ECC8E06005161CB /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */,
+				584DC5231ECC7C8F005161CB /* StepRecognizer.swift */,
+				582E9B8A1ECB427A00321BE4 /* StepProcessor.swift */,
+				584DC5251ECC83F5005161CB /* Speaker.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
 		5876D0711EC9A1DD000D1E01 = {
 			isa = PBXGroup;
 			children = (
@@ -86,10 +101,9 @@
 		5876D07C1EC9A1DD000D1E01 /* SpeechRecognizer */ = {
 			isa = PBXGroup;
 			children = (
+				584DC5271ECC8E06005161CB /* Models */,
 				5876D07D1EC9A1DD000D1E01 /* AppDelegate.swift */,
 				5876D07F1EC9A1DD000D1E01 /* SpeechViewController.swift */,
-				582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */,
-				582E9B8A1ECB427A00321BE4 /* StepProcessor.swift */,
 				58706A061ECB4EE000AD0441 /* CSVImporter.swift */,
 				5876D0811EC9A1DD000D1E01 /* Main.storyboard */,
 				5876D0841EC9A1DD000D1E01 /* Assets.xcassets */,
@@ -197,6 +211,8 @@
 				5876D0801EC9A1DD000D1E01 /* SpeechViewController.swift in Sources */,
 				5876D07E1EC9A1DD000D1E01 /* AppDelegate.swift in Sources */,
 				582E9B8B1ECB427A00321BE4 /* StepProcessor.swift in Sources */,
+				584DC5241ECC7C8F005161CB /* StepRecognizer.swift in Sources */,
+				584DC5261ECC83F5005161CB /* Speaker.swift in Sources */,
 				58706A071ECB4EE000AD0441 /* CSVImporter.swift in Sources */,
 				582E9B891ECB3B6B00321BE4 /* RecipeLibrary.swift in Sources */,
 			);

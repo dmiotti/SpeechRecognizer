@@ -33,8 +33,9 @@ final class StepProcessor: NSObject {
 
     class func nextStep(sentence: String) -> StepMove {
         let matches = stepNRegex.flatMap { matchesIn(sentence, with: $0) }
-        if let firstMatch = matches.first, let matchedNumber = numberFormatter.number(from: firstMatch.lowercased()) {
-            return .at(position: matchedNumber.intValue)
+        let numberMatches = matches.flatMap { numberFormatter.number(from: $0.lowercased()) }
+        if let firstMatch = numberMatches.first {
+            return .at(position: firstMatch.intValue)
         }
 
         if let _ = startRegex.first(where: { !matchesIn(sentence, with: $0).isEmpty }) {
