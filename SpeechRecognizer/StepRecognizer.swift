@@ -17,10 +17,15 @@ private let SpeechSpeakingTimeout: TimeInterval = 3
 typealias StepRecognizerAuthorizationStatus = SFSpeechRecognizerAuthorizationStatus
 
 protocol StepRecognizerDelegate: class {
-    func stepSpeech(recognizer: StepRecognizer, authorizationDidChange status: StepRecognizerAuthorizationStatus)
-    func stepSpeech(recognizer: StepRecognizer, availabilityDidChanged available: Bool)
-    func stepSpeech(recognizer: StepRecognizer, didRecognize move: StepMove, for sentence: String)
-    func stepSpeech(recognizer: StepRecognizer, startRecognizing sentence: String)
+    func stepSpeech(recognizer: StepRecognizer,
+                    authorizationDidChange status: StepRecognizerAuthorizationStatus)
+    func stepSpeech(recognizer: StepRecognizer,
+                    availabilityDidChanged available: Bool)
+    func stepSpeech(recognizer: StepRecognizer,
+                    didRecognize move: StepMove, for sentence: String)
+    func stepSpeech(recognizer: StepRecognizer,
+                    startRecognizing sentence: String)
+    func stepSpeech(recognizer: StepRecognizer, hasListened sentence: String)
     func stepSpeechDidStartRecording(recognizer: StepRecognizer)
     func stepSpeechDidStopRecording(recognizer: StepRecognizer)
     func stepSpeech(recognizer: StepRecognizer, didFail error: Error)
@@ -161,7 +166,7 @@ final class StepRecognizer: NSObject {
 
         /// If the result has changed, restart the timer
         if lastSpeechRecognitionResult?.bestTranscription.formattedString != sentence {
-            print("🎤 \(sentence)")
+            delegate?.stepSpeech(recognizer: self, hasListened: sentence)
             lastSpeechRecognitionResult = result
             restartTimer()
         }

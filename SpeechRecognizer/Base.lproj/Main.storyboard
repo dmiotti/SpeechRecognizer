@@ -51,15 +51,24 @@
                                 <rect key="frame" x="16" y="66" width="343" height="543"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D3d-Nh-SPI">
-                                        <rect key="frame" x="0.0" y="0.0" width="343" height="543"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="343" height="522.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
                                     </textView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Waiting for input" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EyV-Ee-Dcj">
+                                        <rect key="frame" x="0.0" y="522.5" width="343" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
+                                    <constraint firstItem="EyV-Ee-Dcj" firstAttribute="top" secondItem="D3d-Nh-SPI" secondAttribute="bottom" id="BH6-6b-RRN"/>
+                                    <constraint firstItem="EyV-Ee-Dcj" firstAttribute="leading" secondItem="woY-Og-tj7" secondAttribute="leading" id="Duj-qS-7U2"/>
                                     <constraint firstAttribute="trailing" secondItem="D3d-Nh-SPI" secondAttribute="trailing" id="HdY-G6-VIR"/>
-                                    <constraint firstAttribute="bottom" secondItem="D3d-Nh-SPI" secondAttribute="bottom" id="opJ-jh-0nN"/>
+                                    <constraint firstAttribute="bottom" secondItem="EyV-Ee-Dcj" secondAttribute="bottom" id="RGN-jh-5BZ"/>
+                                    <constraint firstAttribute="trailing" secondItem="EyV-Ee-Dcj" secondAttribute="trailing" id="ofI-pB-vEP"/>
                                     <constraint firstItem="D3d-Nh-SPI" firstAttribute="leading" secondItem="woY-Og-tj7" secondAttribute="leading" id="rQh-Nd-0lL"/>
                                     <constraint firstItem="D3d-Nh-SPI" firstAttribute="top" secondItem="woY-Og-tj7" secondAttribute="top" id="um2-tl-Fzx"/>
                                 </constraints>
@@ -89,6 +98,7 @@
                     </view>
                     <connections>
                         <outlet property="currentStepLabel" destination="3MH-Ht-sS1" id="dfc-ou-lqT"/>
+                        <outlet property="liveRecordingLabel" destination="EyV-Ee-Dcj" id="v5E-BI-CEi"/>
                         <outlet property="localeLabel" destination="Qz0-hN-U8r" id="pLI-WN-Rsh"/>
                         <outlet property="recipeButton" destination="ezN-xb-5EW" id="oH2-kH-vJC"/>
                         <outlet property="recordButton" destination="wXk-Vq-rSK" id="b30-be-vCx"/>
@@ -97,7 +107,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="15" y="45"/>
+            <point key="canvasLocation" x="13.6" y="44.527736131934034"/>
         </scene>
     </scenes>
 </document>

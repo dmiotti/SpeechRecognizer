@@ -29,19 +29,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                      restorationHandler: @escaping ([Any]?) -> Void)
         -> Bool {
 
-            if let searchId = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String {
-                print("Search Id: \(searchId)")
-            }
-
-            let userInfo = userActivity.userInfo
-            print("Received a payload via handoff: \(String(describing: userInfo))")
-
-            if  let userInfo = userActivity.userInfo,
-                let _ = userInfo[ActivityVersionKey] as? String {
-                window?.rootViewController?.restoreUserActivityState(userActivity)
-                return true
-            }
-
+            window?.rootViewController?.restoreUserActivityState(userActivity)
             return true
     }
 
