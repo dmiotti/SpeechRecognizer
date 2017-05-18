@@ -12,7 +12,7 @@ import ApiAI
 import SwiftyJSON
 
 private let SpeechSentenceToken = ".*ok chef\\s"
-private let SpeechSpeakingTimeout: TimeInterval = 3
+private let SpeechSpeakingTimeout: TimeInterval = 2
 
 typealias StepRecognizerAuthorizationStatus = SFSpeechRecognizerAuthorizationStatus
 
