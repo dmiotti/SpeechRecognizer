@@ -48,33 +48,33 @@
                                 </subviews>
                             </stackView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="woY-Og-tj7" userLabel="TextView Container">
-                                <rect key="frame" x="16" y="66" width="343" height="543"/>
+                                <rect key="frame" x="16" y="66" width="343" height="541"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D3d-Nh-SPI">
-                                        <rect key="frame" x="0.0" y="0.0" width="343" height="522.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="343" height="498"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
                                     </textView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Waiting for input" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EyV-Ee-Dcj">
-                                        <rect key="frame" x="0.0" y="522.5" width="343" height="20.5"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="EyV-Ee-Dcj" firstAttribute="top" secondItem="D3d-Nh-SPI" secondAttribute="bottom" id="BH6-6b-RRN"/>
-                                    <constraint firstItem="EyV-Ee-Dcj" firstAttribute="leading" secondItem="woY-Og-tj7" secondAttribute="leading" id="Duj-qS-7U2"/>
                                     <constraint firstAttribute="trailing" secondItem="D3d-Nh-SPI" secondAttribute="trailing" id="HdY-G6-VIR"/>
-                                    <constraint firstAttribute="bottom" secondItem="EyV-Ee-Dcj" secondAttribute="bottom" id="RGN-jh-5BZ"/>
-                                    <constraint firstAttribute="trailing" secondItem="EyV-Ee-Dcj" secondAttribute="trailing" id="ofI-pB-vEP"/>
+                                    <constraint firstAttribute="bottom" secondItem="D3d-Nh-SPI" secondAttribute="bottom" constant="43" id="PSb-9Z-MnT"/>
                                     <constraint firstItem="D3d-Nh-SPI" firstAttribute="leading" secondItem="woY-Og-tj7" secondAttribute="leading" id="rQh-Nd-0lL"/>
                                     <constraint firstItem="D3d-Nh-SPI" firstAttribute="top" secondItem="woY-Og-tj7" secondAttribute="top" id="um2-tl-Fzx"/>
                                 </constraints>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Waiting for input" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EyV-Ee-Dcj">
+                                <rect key="frame" x="16" y="645" width="343" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="22" id="UNt-Qq-5Si"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wXk-Vq-rSK">
-                                <rect key="frame" x="16" y="617" width="343" height="30"/>
+                                <rect key="frame" x="16" y="615" width="343" height="30"/>
                                 <accessibility key="accessibilityConfiguration" hint="Commencer ou arrêter l'enregistrement" label="Bouton d'enregistrement"/>
                                 <state key="normal" title="Start recording"/>
                                 <connections>
@@ -85,15 +85,18 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="woY-Og-tj7" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="CvX-wi-ycL"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="EyV-Ee-Dcj" secondAttribute="bottom" id="DFX-ne-esH"/>
+                            <constraint firstItem="EyV-Ee-Dcj" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="FTI-r9-B6m"/>
                             <constraint firstItem="wXk-Vq-rSK" firstAttribute="top" secondItem="woY-Og-tj7" secondAttribute="bottom" constant="8" id="FdB-Su-hu4"/>
                             <constraint firstItem="wXk-Vq-rSK" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Fis-kI-Bto"/>
                             <constraint firstItem="woY-Og-tj7" firstAttribute="top" secondItem="CCU-0k-ioM" secondAttribute="bottom" constant="8" id="et5-RE-rk2"/>
                             <constraint firstAttribute="trailingMargin" secondItem="woY-Og-tj7" secondAttribute="trailing" id="gAx-YV-Nnt"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="wXk-Vq-rSK" secondAttribute="bottom" constant="20" id="kw4-KZ-aCG"/>
+                            <constraint firstItem="EyV-Ee-Dcj" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="huh-xI-Gll"/>
                             <constraint firstItem="CCU-0k-ioM" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="lHH-eF-mys"/>
                             <constraint firstAttribute="leadingMargin" secondItem="CCU-0k-ioM" secondAttribute="leading" id="mJU-Jp-v2b"/>
                             <constraint firstAttribute="trailingMargin" secondItem="wXk-Vq-rSK" secondAttribute="trailing" id="tni-u1-fcW"/>
                             <constraint firstAttribute="trailingMargin" secondItem="CCU-0k-ioM" secondAttribute="trailing" id="w7U-8E-If2"/>
+                            <constraint firstItem="EyV-Ee-Dcj" firstAttribute="top" secondItem="wXk-Vq-rSK" secondAttribute="bottom" id="wbn-sc-zO4"/>
                         </constraints>
                     </view>
                     <connections>
