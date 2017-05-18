@@ -12,31 +12,13 @@
 		583B6E711ECDBFB200DC6555 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 583B6E701ECDBFB200DC6555 /* Constants.swift */; };
 		584DC5241ECC7C8F005161CB /* StepRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584DC5231ECC7C8F005161CB /* StepRecognizer.swift */; };
 		584DC5261ECC83F5005161CB /* Speaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584DC5251ECC83F5005161CB /* Speaker.swift */; };
-		58706A0A1ECB54B800AD0441 /* CSV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58706A081ECB542200AD0441 /* CSV.framework */; };
-		58706A0B1ECB54B800AD0441 /* CSV.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 58706A081ECB542200AD0441 /* CSV.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5876D07E1EC9A1DD000D1E01 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5876D07D1EC9A1DD000D1E01 /* AppDelegate.swift */; };
 		5876D0801EC9A1DD000D1E01 /* SpeechViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5876D07F1EC9A1DD000D1E01 /* SpeechViewController.swift */; };
 		5876D0831EC9A1DD000D1E01 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5876D0811EC9A1DD000D1E01 /* Main.storyboard */; };
 		5876D0851EC9A1DD000D1E01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5876D0841EC9A1DD000D1E01 /* Assets.xcassets */; };
 		5876D0881EC9A1DD000D1E01 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5876D0861EC9A1DD000D1E01 /* LaunchScreen.storyboard */; };
-		5876D0941EC9F876000D1E01 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5876D0921EC9F876000D1E01 /* Fabric.framework */; };
-		5876D0951EC9F876000D1E01 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5876D0931EC9F876000D1E01 /* Crashlytics.framework */; };
 		9019D392C6DF3AE1EA7A759B /* Pods_SpeechRecognizer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF979C5BBA9BE09510A5870F /* Pods_SpeechRecognizer.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		58706A0C1ECB54B800AD0441 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				58706A0B1ECB54B800AD0441 /* CSV.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		250A51EFCEA9C8C516B0EBFC /* Pods-SpeechRecognizer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpeechRecognizer.release.xcconfig"; path = "Pods/Target Support Files/Pods-SpeechRecognizer/Pods-SpeechRecognizer.release.xcconfig"; sourceTree = "<group>"; };
@@ -46,7 +28,6 @@
 		583B6E701ECDBFB200DC6555 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		584DC5231ECC7C8F005161CB /* StepRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StepRecognizer.swift; sourceTree = "<group>"; };
 		584DC5251ECC83F5005161CB /* Speaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Speaker.swift; sourceTree = "<group>"; };
-		58706A081ECB542200AD0441 /* CSV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CSV.framework; path = Carthage/Build/iOS/CSV.framework; sourceTree = SOURCE_ROOT; };
 		5876D07A1EC9A1DD000D1E01 /* SpeechRecognizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeechRecognizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5876D07D1EC9A1DD000D1E01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5876D07F1EC9A1DD000D1E01 /* SpeechViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechViewController.swift; sourceTree = "<group>"; };
@@ -55,8 +36,6 @@
 		5876D0871EC9A1DD000D1E01 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5876D0891EC9A1DD000D1E01 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5876D08F1EC9AF75000D1E01 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		5876D0921EC9F876000D1E01 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = SOURCE_ROOT; };
-		5876D0931EC9F876000D1E01 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = SOURCE_ROOT; };
 		BF979C5BBA9BE09510A5870F /* Pods_SpeechRecognizer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpeechRecognizer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -65,9 +44,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				58706A0A1ECB54B800AD0441 /* CSV.framework in Frameworks */,
-				5876D0951EC9F876000D1E01 /* Crashlytics.framework in Frameworks */,
-				5876D0941EC9F876000D1E01 /* Fabric.framework in Frameworks */,
 				9019D392C6DF3AE1EA7A759B /* Pods_SpeechRecognizer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -116,9 +92,6 @@
 				5876D0841EC9A1DD000D1E01 /* Assets.xcassets */,
 				5876D0861EC9A1DD000D1E01 /* LaunchScreen.storyboard */,
 				5876D0891EC9A1DD000D1E01 /* Info.plist */,
-				58706A081ECB542200AD0441 /* CSV.framework */,
-				5876D0921EC9F876000D1E01 /* Fabric.framework */,
-				5876D0931EC9F876000D1E01 /* Crashlytics.framework */,
 			);
 			path = SpeechRecognizer;
 			sourceTree = "<group>";
@@ -152,7 +125,6 @@
 				5876D0771EC9A1DD000D1E01 /* Frameworks */,
 				5876D0781EC9A1DD000D1E01 /* Resources */,
 				5876D0911EC9F867000D1E01 /* Crashlytics */,
-				58706A0C1ECB54B800AD0441 /* Embed Frameworks */,
 				18AF892B78578FEF10326029 /* [CP] Embed Pods Frameworks */,
 				5BD19215DE26AB3A88BA6B2F /* [CP] Copy Pods Resources */,
 			);
@@ -411,11 +383,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = VLMBA8Q5QL;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				INFOPLIST_FILE = SpeechRecognizer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wopata.SpeechRecognizer;
@@ -430,11 +397,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = VLMBA8Q5QL;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				INFOPLIST_FILE = SpeechRecognizer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wopata.SpeechRecognizer;
