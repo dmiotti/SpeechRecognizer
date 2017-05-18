@@ -8,8 +8,10 @@
 
 import Speech
 import AVKit
+import ApiAI
+import SwiftyJSON
 
-private let SpeechSentenceToken = "ok chef"
+private let SpeechSentenceToken = ".*ok chef\\s"
 private let SpeechSpeakingTimeout: TimeInterval = 3
 
 typealias StepRecognizerAuthorizationStatus = SFSpeechRecognizerAuthorizationStatus
@@ -18,6 +20,7 @@ protocol StepRecognizerDelegate: class {
     func stepSpeech(recognizer: StepRecognizer, authorizationDidChange status: StepRecognizerAuthorizationStatus)
     func stepSpeech(recognizer: StepRecognizer, availabilityDidChanged available: Bool)
     func stepSpeech(recognizer: StepRecognizer, didRecognize move: StepMove, for sentence: String)
+    func stepSpeech(recognizer: StepRecognizer, startRecognizing sentence: String)
     func stepSpeechDidStartRecording(recognizer: StepRecognizer)
     func stepSpeechDidStopRecording(recognizer: StepRecognizer)
     func stepSpeech(recognizer: StepRecognizer, didFail error: Error)
@@ -52,8 +55,9 @@ final class StepRecognizer: NSObject {
     /// The latest voice recognition result
     private var lastSpeechRecognitionResult: SFSpeechRecognitionResult?
 
-    /// True if the recognizer is currently stopping
-    private var isStopping = false
+    private lazy var stepProcessor: StepProcessor = {
+        return StepProcessor()
+    }()
 
     /// The timeout when the sentence spoken by the user should be processed
     /// It's reseted when the user continue speaking
@@ -91,10 +95,12 @@ final class StepRecognizer: NSObject {
     }
 
     func stopRecording() {
-        isStopping = true
+        invalidateTimer()
         audioEngine.stop()
+        audioEngine.inputNode?.removeTap(onBus: 0)
         recognitionRequest?.endAudio()
-        finishStoppingRecording()
+        recognitionRequest = nil
+        recognitionTask = nil
         delegate?.stepSpeechDidStopRecording(recognizer: self)
     }
 
@@ -119,10 +125,14 @@ final class StepRecognizer: NSObject {
 
         // A recognition task represents a speech recognition session.
         // We keep a reference to the task so that it can be cancelled.
-        recognitionTask = speechRecognizer.recognitionTask(with: request, resultHandler: recognize)
+        recognitionTask = speechRecognizer.recognitionTask(with: request,
+                                                           resultHandler: recognize)
 
         let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, _: AVAudioTime) in
+        inputNode.installTap(onBus: 0,
+                             bufferSize: 1024,
+                             format: recordingFormat)
+        { (buffer: AVAudioPCMBuffer, _: AVAudioTime) in
             self.recognitionRequest?.append(buffer)
         }
 
@@ -135,54 +145,84 @@ final class StepRecognizer: NSObject {
 
     // MARK: - Private functions
 
-    private func recognize(result: SFSpeechRecognitionResult?, error: Error?) {
+    private func recognize(result: SFSpeechRecognitionResult?,
+                           error: Error?) {
         guard audioEngine.isRunning else { return }
-        if let result = result {
-            let sentence = result.bestTranscription.formattedString
-            print("🎤 \(sentence)")
 
-            let hasChanged = lastSpeechRecognitionResult?.bestTranscription.formattedString != sentence
-            lastSpeechRecognitionResult = result
-
-            if hasChanged {
-                restartTimer()
+        guard let result = result else {
+            if let error = error {
+                stopRecording()
+                delegate?.stepSpeech(recognizer: self, didFail: error)
             }
+            return
         }
-        if let error = error {
-            self.stopRecording()
-            self.delegate?.stepSpeech(recognizer: self, didFail: error)
-        }
-    }
 
-    private func finishStoppingRecording() {
-        invalidateTimer()
-        audioEngine.stop()
-        audioEngine.inputNode?.removeTap(onBus: 0)
-        recognitionRequest = nil
-        recognitionTask = nil
-        isStopping = false
-        lastSpeechRecognitionResult = nil
+        let sentence = result.bestTranscription.formattedString
+
+        /// If the result has changed, restart the timer
+        if lastSpeechRecognitionResult?.bestTranscription.formattedString != sentence {
+            print("🎤 \(sentence)")
+            lastSpeechRecognitionResult = result
+            restartTimer()
+        }
     }
 
     private func checkAuthorizationStatus() {
         SFSpeechRecognizer.requestAuthorization { status in
             OperationQueue.main.addOperation {
-                self.delegate?.stepSpeech(recognizer: self, authorizationDidChange: status)
+                self.delegate?.stepSpeech(recognizer: self,
+                                          authorizationDidChange: status)
             }
         }
     }
 
     private func restartTimer() {
         invalidateTimer()
-        timeoutTimer = Timer.scheduledTimer(withTimeInterval: SpeechSpeakingTimeout, repeats: false) { _ in
-            print("⚠️ Speaking timeout reached")
-            self.invalidateTimer()
-            if let sentence = self.lastSpeechRecognitionResult?.bestTranscription.formattedString {
-                let stepMove = StepProcessor.nextStep(sentence: sentence)
-                self.delegate?.stepSpeech(recognizer: self, didRecognize: stepMove, for: sentence)
-                self.stopRecording()
-            }
+        timeoutTimer = Timer.scheduledTimer(withTimeInterval: SpeechSpeakingTimeout, repeats: false, block: timerReachEnd(_:))
+    }
+
+    private func timerReachEnd(_ timer: Timer) {
+        print("⚠️ Speaking timeout reached")
+        invalidateTimer()
+        stopRecording()
+
+        guard let sentence = lastSpeechRecognitionResult?.bestTranscription.formattedString else {
+            return
         }
+
+        lastSpeechRecognitionResult = nil
+
+        /// Search for OK, chef
+        delegate?.stepSpeech(recognizer: self, startRecognizing: sentence)
+
+        let tokenRange = sentence.range(of: SpeechSentenceToken, options: [.regularExpression, .caseInsensitive], range: nil, locale: nil)
+        guard let range = tokenRange else {
+            delegate?.stepSpeech(recognizer: self,
+                                 didRecognize: .none(recovery: nil),
+                                 for: sentence)
+            return
+        }
+
+        let pattern = sentence
+            .substring(with: range.upperBound..<sentence.endIndex)
+            .trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+
+        stepProcessor.process(sentence: pattern) { move in
+            self.delegate?.stepSpeech(recognizer: self,
+                                 didRecognize: move,
+                                 for: pattern)
+        }
+
+        /// Linguistic tagging doesn't seems to work
+        linguisticTagger.string = sentence
+        linguisticTagger.enumerateTags(in: NSRange(location: 0, length: sentence.characters.count),
+                                       scheme: NSLinguisticTagSchemeNameTypeOrLexicalClass,
+                                       options: taggerOptions,
+                                       using: { (tag, tokenRange, _, _) in
+
+                                        let token = (sentence as NSString).substring(with: tokenRange)
+                                        print("\(token) -> \(tag)")
+        })
     }
 
     private func invalidateTimer() {
@@ -192,7 +232,8 @@ final class StepRecognizer: NSObject {
 }
 
 extension StepRecognizer: SFSpeechRecognizerDelegate {
-    func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
+    func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer,
+                          availabilityDidChange available: Bool) {
         delegate?.stepSpeech(recognizer: self, availabilityDidChanged: available)
     }
 }

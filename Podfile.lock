@@ -1,0 +1,39 @@
+PODS:
+  - ApiAI (0.7.0):
+    - ApiAI/AudioFileConverter (= 0.7.0)
+    - ApiAI/Core (= 0.7.0)
+    - ApiAI/Events (= 0.7.0)
+    - ApiAI/ResponseMapping (= 0.7.0)
+    - ApiAI/UIKit (= 0.7.0)
+    - ApiAI/UserEntities (= 0.7.0)
+    - ApiAI/VoiceFileRequest (= 0.7.0)
+    - ApiAI/VoiceRequest (= 0.7.0)
+  - ApiAI/AudioFileConverter (0.7.0):
+    - ApiAI/Core
+  - ApiAI/Core (0.7.0)
+  - ApiAI/Events (0.7.0):
+    - ApiAI/Core
+  - ApiAI/ResponseMapping (0.7.0):
+    - ApiAI/Core
+  - ApiAI/UIKit (0.7.0):
+    - ApiAI/Core
+    - ApiAI/VoiceRequest
+  - ApiAI/UserEntities (0.7.0):
+    - ApiAI/Core
+  - ApiAI/VoiceFileRequest (0.7.0):
+    - ApiAI/Core
+  - ApiAI/VoiceRequest (0.7.0):
+    - ApiAI/Core
+  - SwiftyJSON (3.1.4)
+
+DEPENDENCIES:
+  - ApiAI
+  - SwiftyJSON
+
+SPEC CHECKSUMS:
+  ApiAI: 25f763ddd88139dc5fe6794a905300244190d168
+  SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
+
+PODFILE CHECKSUM: bae150796d2d349dd80d1efcd11d6e665d3607eb
+
+COCOAPODS: 1.2.1

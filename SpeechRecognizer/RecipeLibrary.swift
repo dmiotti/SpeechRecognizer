@@ -9,13 +9,15 @@
 import UIKit
 
 struct Recipe {
+    private(set) var id: String
     private(set) var title: String
-    private(set) var description: String
+    private(set) var desc: String
     private(set) var steps: [String]
 
-    init(title: String, description: String, steps: [String]) {
+    init(id: String, title: String, desc: String, steps: [String]) {
+        self.id = id
         self.title = title
-        self.description = description
+        self.desc = desc
         self.steps = steps
     }
 }
@@ -25,7 +27,7 @@ final class RecipeLibrary {
     var recipies = [Recipe]()
 
     init() {
-        let nemsAuxFraises = Recipe(title: "Nems aux fraises", description: "Dessert facile et bon marché. Végétarien", steps: [
+        let nemsAuxFraises = Recipe(id: "1", title: "Nems aux fraises", desc: "Dessert facile et bon marché. Végétarien", steps: [
             "Laver les fraises sous l'eau et les équeuter.",
             "Les couper en morceaux dans un saladier et les saupoudrer de sucre.",
             "Etaler vos feuilles de brick sur un plan de travail et couper les en deux.",
@@ -35,7 +37,7 @@ final class RecipeLibrary {
         ])
         recipies.append(nemsAuxFraises)
 
-        let tagliatellesAuxChocolat = Recipe(title: "Tagliatelles au chocolat", description: "Dessert - Très facile - Bon marché - Végétarien - Sans porc", steps: [
+        let tagliatellesAuxChocolat = Recipe(id: "2", title: "Tagliatelles au chocolat", desc: "Dessert - Très facile - Bon marché - Végétarien - Sans porc", steps: [
             "Mélanger la farine et le cacao en même temps.",
             "Ajouter le sucre et la cannelle.",
             "Faire un puit au centre et y casser les eux.",
@@ -45,10 +47,10 @@ final class RecipeLibrary {
             "Plonger les tagliatelles au chocolat dans une casserole d'eau bouillante.",
             "Laisser cuire 3 minutes.",
             "Dresser dans les assiettes, parsemer de pistaches concassées et de sucre glace avant de servir."
-            ])
+        ])
         recipies.append(tagliatellesAuxChocolat)
 
-        let amourDeSaumonEnPapillote = Recipe(title: "Amour de saumon en papillote", description: "Plat principal - Très facile - Moyen", steps: [
+        let amourDeSaumonEnPapillote = Recipe(id: "3", title: "Amour de saumon en papillote", desc: "Plat principal - Très facile - Moyen", steps: [
             "Préchauffer le four à 180°C (thermostat 6).",
             "Laver, essorer et ciseler l'aneth. Peler et émincer la gousse d'ail finement. Réserver.",
             "Couper les tomates cerise en deux.",
@@ -56,7 +58,7 @@ final class RecipeLibrary {
             "Déposer au centre de chaque feuille de papier cuisson un pavé de saumon, ajouter les tomates et les champignons tout autour.",
             "Parsemer les pavés de saumon d'aneth et d'ail et les arroser d'un filet de jus de citron. Poivrer, saler et terminer par un filet d'huile d'olive.",
             "Fermer les papillotes et les mettre au four pendant 25 à 30 minutes."
-            ])
+        ])
         recipies.append(amourDeSaumonEnPapillote)
     }
 }

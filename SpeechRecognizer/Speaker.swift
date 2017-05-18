@@ -10,7 +10,8 @@ import Foundation
 import Speech
 
 protocol SpeakerDelegate: class {
-    func speaker(speaker: Speaker, didSpeak sentence: String)
+    func speaker(speaker: Speaker,
+                 didSpeak sentence: String)
     func speakerDidFinishSpeaking(speaker: Speaker)
 }
 
@@ -39,11 +40,13 @@ final class Speaker: NSObject, AVSpeechSynthesizerDelegate {
         speechSynthesizer.speak(utt)
     }
 
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
+                           didStart utterance: AVSpeechUtterance) {
         delegate?.speaker(speaker: self, didSpeak: utterance.speechString)
     }
 
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
+                           didFinish utterance: AVSpeechUtterance) {
         speakLeft -= 1
     }
 }

@@ -6,7 +6,8 @@
 //  Copyright © 2017 Wopata. All rights reserved.
 //
 
-import UIKit
+import ApiAI
+import SwiftyJSON
 
 enum StepMove {
     case beginning
@@ -15,67 +16,61 @@ enum StepMove {
     case at(position: Int)
     case end
     case `repeat`
-    case none
+    case none(recovery: String?)
 }
 
-final class StepProcessor: NSObject {
-    static var stepNRegex = [String]()
-    static var startRegex = [String]()
-    static var endRegex = [String]()
-    static var nextRegex = [String]()
-    static var previousRegex = [String]()
-    static var repeatRegex = [String]()
-
-    static var numberFormatter: NumberFormatter = {
-        let number = NumberFormatter()
-        number.locale = Locale.current
-        number.numberStyle = .spellOut
-        return number
+final class StepProcessor {
+    private lazy var apiAI: ApiAI = {
+        let api = ApiAI()
+        var configuration = AIDefaultConfiguration()
+        configuration.clientAccessToken = ApiAIAccessToken
+        api.configuration = configuration
+        return api
     }()
 
-    class func nextStep(sentence: String) -> StepMove {
-        let matches = stepNRegex.flatMap { matchesIn(sentence, with: $0) }
-        let numberMatches = matches.flatMap { numberFormatter.number(from: $0.lowercased()) }
-        if let firstMatch = numberMatches.first {
-            return .at(position: firstMatch.intValue)
+    func process(sentence: String, completion: @escaping (StepMove) -> Void) {
+        guard let request = self.apiAI.textRequest() else {
+            completion(.none(recovery: nil))
+            return
         }
 
-        if let _ = startRegex.first(where: { !matchesIn(sentence, with: $0).isEmpty }) {
-            return .beginning
-        }
+        request.query = sentence
+        request.setCompletionBlockSuccess({ (request, response) in
+            let data = JSON(response ?? [:])["result"]
+            print("*** ApiAI ***\n\(data)\n\n")
 
-        if let _ = endRegex.first(where: { !matchesIn(sentence, with: $0).isEmpty }) {
-            return .end
-        }
+            var move: StepMove = .none(recovery: data["fullfillment"]["speech"].string)
+            if let action = data["action"].string {
+                switch action {
+                case "next-step":
+                    move = .next
+                case "previous-step":
+                    move = .previous
+                case "step-n":
+                    var step = data["parameters"]["step"].int
+                    if step == nil, let stepStr = data["parameters"]["step"].string {
+                        step = Int(stepStr)
+                    }
+                    if let step = step {
+                        move = .at(position: step)
+                    }
+                case "last-step":
+                    move = .end
+                case "reset":
+                    move = .beginning
+                case "repeat":
+                    move = .repeat
+                default:
+                    break
+                }
+            }
 
-        if let _ = nextRegex.first(where: { !matchesIn(sentence, with: $0).isEmpty }) {
-            return .next
-        }
+            completion(move)
+        }, failure: { (request, error) in
+            print("Error: \(String(describing: error))")
+            completion(.none(recovery: nil))
+        })
 
-        if let _ = previousRegex.first(where: { !matchesIn(sentence, with: $0).isEmpty }) {
-            return .previous
-        }
-
-        if let _ = repeatRegex.first(where: { !matchesIn(sentence, with: $0).isEmpty }) {
-            return .repeat
-        }
-
-        return .none
-    }
-}
-
-private func matchesIn(_ text: String, with pattern: String) -> [String] {
-    let textRange = NSRange(location: 0, length: text.characters.count)
-    guard let matches = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else {
-        return []
-    }
-    return matches.matches(in: text, options: .reportCompletion, range: textRange).flatMap { res -> [String] in
-        var matched = [String]()
-        for i in 0..<res.numberOfRanges {
-            let range = res.rangeAt(i)
-            let str = (text as NSString).substring(with: range) as String
-            matched.append(str)
-        }
-        return matched
+        apiAI.enqueue(request)
     }
 }
