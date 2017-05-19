@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreSpotlight
 
 struct Recipe {
     private(set) var id: String
@@ -24,7 +25,7 @@ struct Recipe {
 
 final class RecipeLibrary {
     static let shared = RecipeLibrary()
-    var recipies = [Recipe]()
+    var recipes = [Recipe]()
 
     init() {
         let nemsAuxFraises = Recipe(id: "1", title: "Nems aux fraises", desc: "Dessert facile et bon marché. Végétarien", steps: [
@@ -35,7 +36,7 @@ final class RecipeLibrary {
             "Poser dessus une cuillère à café de crème pâtissière et rouler les feuilles de brick comme un nem.",
             "Chaque convive trempera ses nems dans le coulis de fruits rouges froid."
         ])
-        recipies.append(nemsAuxFraises)
+        recipes.append(nemsAuxFraises)
 
         let tagliatellesAuxChocolat = Recipe(id: "2", title: "Tagliatelles au chocolat", desc: "Dessert - Très facile - Bon marché - Végétarien - Sans porc", steps: [
             "Mélanger la farine et le cacao en même temps.",
@@ -48,7 +49,7 @@ final class RecipeLibrary {
             "Laisser cuire 3 minutes.",
             "Dresser dans les assiettes, parsemer de pistaches concassées et de sucre glace avant de servir."
         ])
-        recipies.append(tagliatellesAuxChocolat)
+        recipes.append(tagliatellesAuxChocolat)
 
         let amourDeSaumonEnPapillote = Recipe(id: "3", title: "Amour de saumon en papillote", desc: "Plat principal - Très facile - Moyen", steps: [
             "Préchauffer le four à 180°C (thermostat 6).",
@@ -59,6 +60,30 @@ final class RecipeLibrary {
             "Parsemer les pavés de saumon d'aneth et d'ail et les arroser d'un filet de jus de citron. Poivrer, saler et terminer par un filet d'huile d'olive.",
             "Fermer les papillotes et les mettre au four pendant 25 à 30 minutes."
         ])
-        recipies.append(amourDeSaumonEnPapillote)
+        recipes.append(amourDeSaumonEnPapillote)
+
+        RecipeLibrary.index(recipes: recipes)
+    }
+
+    class func searchAttributes(for recipe: Recipe) -> CSSearchableItemAttributeSet {
+        let attr = CSSearchableItemAttributeSet(itemContentType: ActivityTypeView)
+        attr.relatedUniqueIdentifier = recipe.id
+        attr.title = recipe.title
+        attr.contentDescription = "\(recipe.desc) – Recette de cuisine"
+        attr.rating = 4.5
+        attr.ratingDescription = "Like by other cookers"
+        return attr
+    }
+
+    class func index(recipes: [Recipe]) {
+        let items = recipes.map { recipe -> CSSearchableItem in
+            let attr = searchAttributes(for: recipe)
+            return CSSearchableItem(uniqueIdentifier: recipe.id, domainIdentifier: "recipe", attributeSet: attr)
+        }
+        CSSearchableIndex.default().indexSearchableItems(items) { error in
+            if let error = error {
+                print("Error while indexing searchable items \(items): \(error)")
+            }
+        }
     }
 }

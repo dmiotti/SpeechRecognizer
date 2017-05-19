@@ -34,7 +34,9 @@ final class SpeechViewController: UIViewController {
 
     // MARK: Model Properties
 
-    private var recipes = RecipeLibrary.shared.recipies
+    private lazy var recipes: [Recipe] = {
+        return RecipeLibrary.shared.recipes
+    }()
 
     /// The recipe we walk through
     private var recipe: Recipe? {
@@ -107,24 +109,7 @@ final class SpeechViewController: UIViewController {
             ActivityVersionKey: ActivityVersionValue
         ]
 
-        let attr = CSSearchableItemAttributeSet(itemContentType: ActivityTypeView)
-        attr.relatedUniqueIdentifier = recipe.id
-        attr.title = recipe.title
-        attr.contentDescription = "\(recipe.desc) – Recette de cuisine"
-        attr.rating = 4.5
-        attr.ratingDescription = "Like by other cookers"
-
-        let item = CSSearchableItem(uniqueIdentifier: recipe.id, domainIdentifier: "recipe", attributeSet: attr)
-        CSSearchableIndex.default().indexSearchableItems([item]) { error in
-            if let error = error {
-                print("Error while indexing searchable item \(item): \(error)")
-            } else {
-                DispatchQueue.main.async {
-                    self.appendToTextView("🔎 '\(recipe.title)' indexé avec Spotlight")
-                }
-            }
-        }
-        activity.contentAttributeSet = attr
+        activity.contentAttributeSet = RecipeLibrary.searchAttributes(for: recipe)
 
         activity.needsSave = true
 
