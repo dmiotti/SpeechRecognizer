@@ -19,7 +19,7 @@ enum StepMove {
     case none(recovery: String?)
 }
 
-final class StepProcessor {
+final class StepSpeechAnalyser {
     private lazy var apiAI: ApiAI = {
         let api = ApiAI()
         var configuration = AIDefaultConfiguration()
@@ -37,7 +37,6 @@ final class StepProcessor {
         request.query = sentence
         request.setCompletionBlockSuccess({ (request, response) in
             let data = JSON(response ?? [:])["result"]
-            print("*** ApiAI ***\n\(data)\n\n")
 
             var move: StepMove = .none(recovery: data["fullfillment"]["speech"].string)
             if let action = data["action"].string {

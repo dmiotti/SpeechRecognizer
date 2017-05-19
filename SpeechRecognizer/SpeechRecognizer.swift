@@ -14,27 +14,28 @@ import SwiftyJSON
 private let SpeechSentenceToken = ".*ok chef\\s"
 private let SpeechSpeakingTimeout: TimeInterval = 2
 
-typealias StepRecognizerAuthorizationStatus = SFSpeechRecognizerAuthorizationStatus
+typealias SpeechRecognizerAuthorizationStatus = SFSpeechRecognizerAuthorizationStatus
 
-protocol StepRecognizerDelegate: class {
-    func stepSpeech(recognizer: StepRecognizer,
-                    authorizationDidChange status: StepRecognizerAuthorizationStatus)
-    func stepSpeech(recognizer: StepRecognizer,
+protocol SpeechRecognizerDelegate: class {
+    func stepSpeech(recognizer: SpeechRecognizer,
+                    authorizationDidChange status: SpeechRecognizerAuthorizationStatus)
+    func stepSpeech(recognizer: SpeechRecognizer,
                     availabilityDidChanged available: Bool)
-    func stepSpeech(recognizer: StepRecognizer,
+    func stepSpeech(recognizer: SpeechRecognizer,
                     didRecognize move: StepMove, for sentence: String)
-    func stepSpeech(recognizer: StepRecognizer,
+    func stepSpeech(recognizer: SpeechRecognizer,
                     startRecognizing sentence: String)
-    func stepSpeech(recognizer: StepRecognizer, hasListened sentence: String)
-    func stepSpeechDidStartRecording(recognizer: StepRecognizer)
-    func stepSpeechDidStopRecording(recognizer: StepRecognizer)
-    func stepSpeech(recognizer: StepRecognizer, didFail error: Error)
+    func stepSpeech(recognizer: SpeechRecognizer,
+                    hasListened sentence: String)
+    func stepSpeechDidStartRecording(recognizer: SpeechRecognizer)
+    func stepSpeechDidStopRecording(recognizer: SpeechRecognizer)
+    func stepSpeech(recognizer: SpeechRecognizer, didFail error: Error)
 }
 
-final class StepRecognizer: NSObject {
+final class SpeechRecognizer: NSObject {
     // MARK: Recognizer Properties
 
-    weak var delegate: StepRecognizerDelegate?
+    weak var delegate: SpeechRecognizerDelegate?
 
     private lazy var speechRecognizer: SFSpeechRecognizer? = {
         if let recognizer = SFSpeechRecognizer(locale: Locale.current) {
@@ -60,8 +61,8 @@ final class StepRecognizer: NSObject {
     /// The latest voice recognition result
     private var lastSpeechRecognitionResult: SFSpeechRecognitionResult?
 
-    private lazy var stepProcessor: StepProcessor = {
-        return StepProcessor()
+    private lazy var stepAnalyser: StepSpeechAnalyser = {
+        return StepSpeechAnalyser()
     }()
 
     /// The timeout when the sentence spoken by the user should be processed
@@ -79,7 +80,7 @@ final class StepRecognizer: NSObject {
         return false
     }
 
-    var authorizationStatus: StepRecognizerAuthorizationStatus {
+    var authorizationStatus: SpeechRecognizerAuthorizationStatus {
         return SFSpeechRecognizer.authorizationStatus()
     }
 
@@ -183,7 +184,9 @@ final class StepRecognizer: NSObject {
 
     private func restartTimer() {
         invalidateTimer()
-        timeoutTimer = Timer.scheduledTimer(withTimeInterval: SpeechSpeakingTimeout, repeats: false, block: timerReachEnd(_:))
+        timeoutTimer = Timer.scheduledTimer(withTimeInterval: SpeechSpeakingTimeout,
+                                            repeats: false,
+                                            block: timerReachEnd(_:))
     }
 
     private func timerReachEnd(_ timer: Timer) {
@@ -200,7 +203,9 @@ final class StepRecognizer: NSObject {
         /// Search for OK, chef
         delegate?.stepSpeech(recognizer: self, startRecognizing: sentence)
 
-        let tokenRange = sentence.range(of: SpeechSentenceToken, options: [.regularExpression, .caseInsensitive], range: nil, locale: nil)
+        let tokenRange = sentence.range(of: SpeechSentenceToken,
+                                        options: [.regularExpression, .caseInsensitive],
+                                        range: nil, locale: nil)
         guard let range = tokenRange else {
             delegate?.stepSpeech(recognizer: self,
                                  didRecognize: .none(recovery: nil),
@@ -212,7 +217,7 @@ final class StepRecognizer: NSObject {
             .substring(with: range.upperBound..<sentence.endIndex)
             .trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
 
-        stepProcessor.process(sentence: pattern) { move in
+        stepAnalyser.process(sentence: pattern) { move in
             self.delegate?.stepSpeech(recognizer: self,
                                  didRecognize: move,
                                  for: pattern)
@@ -236,7 +241,7 @@ final class StepRecognizer: NSObject {
     }
 }
 
-extension StepRecognizer: SFSpeechRecognizerDelegate {
+extension SpeechRecognizer: SFSpeechRecognizerDelegate {
     func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer,
                           availabilityDidChange available: Bool) {
         delegate?.stepSpeech(recognizer: self, availabilityDidChanged: available)

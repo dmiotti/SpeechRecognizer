@@ -20,8 +20,8 @@ final class SpeechViewController: UIViewController {
     @IBOutlet weak var recipeButton: UIButton!
     @IBOutlet weak var liveRecordingLabel: UILabel!
 
-    fileprivate lazy var stepRecognizer: StepRecognizer = {
-        return StepRecognizer()
+    fileprivate lazy var stepRecognizer: SpeechRecognizer = {
+        return SpeechRecognizer()
     }()
 
     // MARK: Speaker Properties
@@ -54,7 +54,7 @@ final class SpeechViewController: UIViewController {
     // The current `recipe.steps[currentStep]`
     private var currentStep = -1
 
-    // MARK: UIViewController
+    // MARK: View lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,30 +92,6 @@ final class SpeechViewController: UIViewController {
     }
 
     // MARK: Private methods
-
-    private func startUserActivity(recipe: Recipe) {
-        userActivity?.invalidate()
-
-        let activity = NSUserActivity(activityType: ActivityTypeView)
-        activity.isEligibleForSearch = true
-        activity.isEligibleForPublicIndexing = true
-        activity.expirationDate = .distantFuture
-        activity.title = recipe.title
-        activity.keywords = Set(recipe.steps + [recipe.title, "recette", "recipe"])
-        activity.webpageURL = URL(string: "https://tupperware/recipes/\(recipe.id)")
-        activity.requiredUserInfoKeys = Set([ActivityRecipeKey])
-        activity.userInfo = [
-            ActivityRecipeKey: recipe.id,
-            ActivityVersionKey: ActivityVersionValue
-        ]
-
-        activity.contentAttributeSet = RecipeLibrary.searchAttributes(for: recipe)
-
-        activity.needsSave = true
-
-        userActivity = activity
-        userActivity?.becomeCurrent()
-    }
 
     fileprivate func appendToTextView(_ text: String) {
         textView.text = text + "\n\n" + (textView.text ?? "")
@@ -189,6 +165,25 @@ final class SpeechViewController: UIViewController {
         }
     }
 
+    // MARK: - NSUserActivity
+
+    private func startUserActivity(recipe: Recipe) {
+        userActivity?.invalidate()
+        let activity = NSUserActivity(activityType: ActivityTypeView)
+        activity.isEligibleForSearch = true
+        activity.isEligibleForPublicIndexing = true
+        activity.expirationDate = .distantFuture
+        activity.title = recipe.title
+        activity.keywords = Set(recipe.steps + [recipe.title, "recette", "recipe"])
+        activity.webpageURL = URL(string: "https://tupperware/recipes/\(recipe.id)")
+        activity.requiredUserInfoKeys = Set([ActivityRecipeKey])
+        activity.userInfo = [ ActivityRecipeKey: recipe.id, ActivityVersionKey: ActivityVersionValue ]
+        activity.contentAttributeSet = RecipeLibrary.searchAttributes(for: recipe)
+        activity.needsSave = true
+        userActivity = activity
+        userActivity?.becomeCurrent()
+    }
+
     override func updateUserActivityState(_ activity: NSUserActivity) {
         if let recipe = recipe {
             activity.addUserInfoEntries(from: [ActivityRecipeKey: recipe.id])
@@ -222,6 +217,7 @@ final class SpeechViewController: UIViewController {
     }
 }
 
+// MARK: - SpeakerDelegate
 extension SpeechViewController: SpeakerDelegate {
     func speaker(speaker: Speaker,
                  didSpeak sentence: String) {
@@ -233,18 +229,19 @@ extension SpeechViewController: SpeakerDelegate {
     }
 }
 
-extension SpeechViewController: StepRecognizerDelegate {
-    func stepSpeech(recognizer: StepRecognizer,
+// MARK: - StepRecognizerDelegate
+extension SpeechViewController: SpeechRecognizerDelegate {
+    func stepSpeech(recognizer: SpeechRecognizer,
                     availabilityDidChanged available: Bool) {
         refreshRecordButton()
     }
 
-    func stepSpeech(recognizer: StepRecognizer,
-                    authorizationDidChange status: StepRecognizerAuthorizationStatus) {
+    func stepSpeech(recognizer: SpeechRecognizer,
+                    authorizationDidChange status: SpeechRecognizerAuthorizationStatus) {
         refreshRecordButton()
     }
 
-    func stepSpeech(recognizer: StepRecognizer,
+    func stepSpeech(recognizer: SpeechRecognizer,
                     didRecognize move: StepMove,
                     for sentence: String) {
         appendToTextView("🎤 \(sentence.capitalized)")
@@ -260,25 +257,25 @@ extension SpeechViewController: StepRecognizerDelegate {
         }
     }
 
-    func stepSpeechDidStartRecording(recognizer: StepRecognizer) {
+    func stepSpeechDidStartRecording(recognizer: SpeechRecognizer) {
         appendToTextView("👨🏼‍🚀 Go ahead, I'm listening")
         refreshRecordButton()
     }
 
-    func stepSpeechDidStopRecording(recognizer: StepRecognizer) {
+    func stepSpeechDidStopRecording(recognizer: SpeechRecognizer) {
         refreshRecordButton()
         appendToTextView("👨🏼‍🚀 Nah, I'm stopping listening you")
     }
 
-    func stepSpeech(recognizer: StepRecognizer, startRecognizing sentence: String) {
+    func stepSpeech(recognizer: SpeechRecognizer, startRecognizing sentence: String) {
         appendToTextView("💿 Start recognizing...")
     }
 
-    func stepSpeech(recognizer: StepRecognizer, hasListened sentence: String) {
+    func stepSpeech(recognizer: SpeechRecognizer, hasListened sentence: String) {
         liveRecordingLabel.text = "🎤 \(sentence)"
     }
 
-    func stepSpeech(recognizer: StepRecognizer, didFail error: Error) {
+    func stepSpeech(recognizer: SpeechRecognizer, didFail error: Error) {
         appendToTextView("⚠️ \(error.localizedDescription)")
     }
 }

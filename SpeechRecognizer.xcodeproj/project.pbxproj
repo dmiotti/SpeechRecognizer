@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		582E9B891ECB3B6B00321BE4 /* RecipeLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */; };
-		582E9B8B1ECB427A00321BE4 /* StepProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582E9B8A1ECB427A00321BE4 /* StepProcessor.swift */; };
+		582E9B8B1ECB427A00321BE4 /* StepSpeechAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582E9B8A1ECB427A00321BE4 /* StepSpeechAnalyser.swift */; };
 		583B6E711ECDBFB200DC6555 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 583B6E701ECDBFB200DC6555 /* Constants.swift */; };
-		584DC5241ECC7C8F005161CB /* StepRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584DC5231ECC7C8F005161CB /* StepRecognizer.swift */; };
+		584DC5241ECC7C8F005161CB /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584DC5231ECC7C8F005161CB /* SpeechRecognizer.swift */; };
 		584DC5261ECC83F5005161CB /* Speaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584DC5251ECC83F5005161CB /* Speaker.swift */; };
 		5876D07E1EC9A1DD000D1E01 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5876D07D1EC9A1DD000D1E01 /* AppDelegate.swift */; };
 		5876D0801EC9A1DD000D1E01 /* SpeechViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5876D07F1EC9A1DD000D1E01 /* SpeechViewController.swift */; };
@@ -24,9 +24,9 @@
 		250A51EFCEA9C8C516B0EBFC /* Pods-SpeechRecognizer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpeechRecognizer.release.xcconfig"; path = "Pods/Target Support Files/Pods-SpeechRecognizer/Pods-SpeechRecognizer.release.xcconfig"; sourceTree = "<group>"; };
 		3518648E8DCF8C21A305F0AC /* Pods-SpeechRecognizer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpeechRecognizer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpeechRecognizer/Pods-SpeechRecognizer.debug.xcconfig"; sourceTree = "<group>"; };
 		582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecipeLibrary.swift; sourceTree = "<group>"; };
-		582E9B8A1ECB427A00321BE4 /* StepProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StepProcessor.swift; sourceTree = "<group>"; };
+		582E9B8A1ECB427A00321BE4 /* StepSpeechAnalyser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StepSpeechAnalyser.swift; sourceTree = "<group>"; };
 		583B6E701ECDBFB200DC6555 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		584DC5231ECC7C8F005161CB /* StepRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StepRecognizer.swift; sourceTree = "<group>"; };
+		584DC5231ECC7C8F005161CB /* SpeechRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
 		584DC5251ECC83F5005161CB /* Speaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Speaker.swift; sourceTree = "<group>"; };
 		5876D07A1EC9A1DD000D1E01 /* SpeechRecognizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeechRecognizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5876D07D1EC9A1DD000D1E01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -55,8 +55,8 @@
 			isa = PBXGroup;
 			children = (
 				582E9B881ECB3B6B00321BE4 /* RecipeLibrary.swift */,
-				584DC5231ECC7C8F005161CB /* StepRecognizer.swift */,
-				582E9B8A1ECB427A00321BE4 /* StepProcessor.swift */,
+				584DC5231ECC7C8F005161CB /* SpeechRecognizer.swift */,
+				582E9B8A1ECB427A00321BE4 /* StepSpeechAnalyser.swift */,
 				584DC5251ECC83F5005161CB /* Speaker.swift */,
 			);
 			name = Models;
@@ -254,8 +254,8 @@
 			files = (
 				5876D0801EC9A1DD000D1E01 /* SpeechViewController.swift in Sources */,
 				5876D07E1EC9A1DD000D1E01 /* AppDelegate.swift in Sources */,
-				582E9B8B1ECB427A00321BE4 /* StepProcessor.swift in Sources */,
-				584DC5241ECC7C8F005161CB /* StepRecognizer.swift in Sources */,
+				582E9B8B1ECB427A00321BE4 /* StepSpeechAnalyser.swift in Sources */,
+				584DC5241ECC7C8F005161CB /* SpeechRecognizer.swift in Sources */,
 				584DC5261ECC83F5005161CB /* Speaker.swift in Sources */,
 				582E9B891ECB3B6B00321BE4 /* RecipeLibrary.swift in Sources */,
 				583B6E711ECDBFB200DC6555 /* Constants.swift in Sources */,
