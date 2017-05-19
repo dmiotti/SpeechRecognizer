@@ -45,6 +45,9 @@ final class SpeechViewController: UIViewController {
                 recipeButton.setTitle(recipe.title, for: .normal)
                 applyStep(move: .beginning)
                 startUserActivity(recipe: recipe)
+                updateApplicationShortcutItem(recipe: recipe)
+                let generator = UINotificationFeedbackGenerator()
+                generator.notificationOccurred(.success)
             } else {
                 recipeButton.setTitle("Pick a recipe", for: .normal)
             }
@@ -79,7 +82,9 @@ final class SpeechViewController: UIViewController {
     }
 
     @IBAction func recipesButtonTapped(_ sender: Any) {
-        let actionSheet = UIAlertController(title: "Pick a recipe", message: nil, preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(title: "Pick a recipe",
+                                            message: nil,
+                                            preferredStyle: .actionSheet)
         recipes.forEach { recipe in
             let action = UIAlertAction(title: recipe.title, style: .default) { _ in
                 self.recipe = recipe
@@ -92,6 +97,16 @@ final class SpeechViewController: UIViewController {
     }
 
     // MARK: Private methods
+
+    private func updateApplicationShortcutItem(recipe: Recipe) {
+        let icon = UIApplicationShortcutIcon(type: .play)
+        let continueItem = UIApplicationShortcutItem(type: "continue.recipe",
+                                                     localizedTitle: "Continuer \(recipe.title)",
+            localizedSubtitle: nil,
+            icon: icon,
+            userInfo: ["recipe_id": recipe.id])
+        UIApplication.shared.shortcutItems = [continueItem]
+    }
 
     fileprivate func appendToTextView(_ text: String) {
         textView.text = text + "\n\n" + (textView.text ?? "")
@@ -245,15 +260,17 @@ extension SpeechViewController: SpeechRecognizerDelegate {
                     didRecognize move: StepMove,
                     for sentence: String) {
         appendToTextView("🎤 \(sentence.capitalized)")
-        applyStep(move: move)
+
+        let generator = UINotificationFeedbackGenerator()
         switch move {
         case .none(let recovery):
             speaker.speak(text: recovery ?? "Désolé je ne vous ai pas compris")
+            generator.notificationOccurred(.error)
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 try? self.stepRecognizer.startRecording()
             }
         default:
-            break
+            generator.notificationOccurred(.success)
         }
     }
 
@@ -267,15 +284,20 @@ extension SpeechViewController: SpeechRecognizerDelegate {
         appendToTextView("👨🏼‍🚀 Nah, I'm stopping listening you")
     }
 
-    func stepSpeech(recognizer: SpeechRecognizer, startRecognizing sentence: String) {
+    func stepSpeech(recognizer: SpeechRecognizer,
+                    startRecognizing sentence: String) {
         appendToTextView("💿 Start recognizing...")
     }
 
-    func stepSpeech(recognizer: SpeechRecognizer, hasListened sentence: String) {
+    func stepSpeech(recognizer: SpeechRecognizer,
+                    hasListened sentence: String) {
         liveRecordingLabel.text = "🎤 \(sentence)"
     }
 
-    func stepSpeech(recognizer: SpeechRecognizer, didFail error: Error) {
+    func stepSpeech(recognizer: SpeechRecognizer,
+                    didFail error: Error) {
         appendToTextView("⚠️ \(error.localizedDescription)")
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.error)
     }
 }

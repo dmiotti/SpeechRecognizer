@@ -2,6 +2,9 @@
 
 * Shows how to use SFSpeechRecognizer with AVAudioEngine to record what a user says and transcribe it into text.
 * Use ApiAI for intent recognition
+* Use CoreSpotlight to index recipes
+* Use HandOff to continues recipe from the web
+* Use 3D Touch to quickly continue current recipe
 
 ## Requirements
 
