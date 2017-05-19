@@ -220,8 +220,8 @@ final class SpeechViewController: UIViewController {
                 recipe = found
             }
             else if
-                let recipeId = userInfo[CSSearchableItemActivityIdentifier] as? Int,
-                let found = recipes.filter({ $0.id == recipeId.description }).first {
+                let recipeId = userInfo[CSSearchableItemActivityIdentifier] as? String,
+                let found = recipes.filter({ $0.id == recipeId }).first {
 
                 recipe = found
             }
